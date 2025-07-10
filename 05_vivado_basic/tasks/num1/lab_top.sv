@@ -1,4 +1,3 @@
-
 module lab_top
 # (
     parameter  w_sw          = 16,
@@ -12,6 +11,6 @@ module lab_top
 
     
    
-   assign led_o = sw_i;
+   assign led_o = 16'd13_1_04;
 
 endmodule
