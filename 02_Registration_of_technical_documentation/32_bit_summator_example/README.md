@@ -19,3 +19,15 @@
 ]}
 
 ```
+
+ ```md
+ {reg: [
+    {bits: 7,  name: 'opcode',    attr: 'BRANCH'},
+    {bits: 5,  name: 'imm',       attr: 'offset[11|4:1]', type: 7},
+    {bits: 3,  name: 'func3',     attr: ['BEQ', 'BNE', 'BLT', 'BLTU', 'BGE', 'BGEU'], type: 4},
+    {bits: 5,  name: 'rs1',       attr: 'src1'},
+    {bits: 5,  name: 'rs2',       attr: 'src2'},
+    {bits: 7,  name: 'imm',       attr: 'offset[12|10:5]', type: 3}
+]}
+
+ ```
