@@ -1,4 +1,3 @@
-
 module lab_top
 # (
     parameter  w_sw          = 16,
