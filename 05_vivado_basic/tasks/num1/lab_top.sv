@@ -11,6 +11,6 @@ module lab_top
 
     
    
-   assign led_o = 16'd13_1_04;
+   assign led_o = sw_i;    
 
 endmodule
