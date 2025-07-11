@@ -20,6 +20,8 @@
 
 ```
 
+![](./pic/02_Registration_of_technical_documentation_32_bit_summator_example_reg_waveform.png)
+
  ```md
  {reg: [
     {bits: 7,  name: 'opcode',    attr: 'BRANCH'},
@@ -31,3 +33,5 @@
 ]}
 
  ```
+ 
+ ![](./pic/02_Registration_of_technical_documentation_32_bit_summator_example_waveform__1_.png)
