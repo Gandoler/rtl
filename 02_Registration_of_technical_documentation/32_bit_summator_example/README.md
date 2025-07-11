@@ -1,6 +1,6 @@
  # 32 BIT Summator
  
- [ссылка на проекит в  drowio](https://clck.ru/3N2niM)
+ [ссылка на проект в  drawio](https://clck.ru/3N2niM)
  
 # Суупер примерное поведеие на графике 
 
