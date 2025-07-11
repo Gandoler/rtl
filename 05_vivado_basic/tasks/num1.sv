@@ -1,4 +1,4 @@
-module lab_top
+module num1
 # (
     parameter  w_sw          = 16,
                w_led         = 16
