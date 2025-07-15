@@ -440,7 +440,7 @@ set_property -name "options.report_unconstrained" -value "1" -objects $obj
    1. Инициализация переменной
       1. Создается переменная idrFlowPropertiesConstraints с пустым значением
    2. Блок обработки ошибок (catch)
-      1. Пытается получить текущее значение параметра runs.disableIDRFlowPropertyConstraints
+      1. Пытается получить текущее значение параметра runs.`disableIDRFlowPropertyConstraints`
       2. Устанавливает параметр runs.disableIDRFlowPropertyConstraints в 1
          (отключает ограничения свойств потока IDR)
 
@@ -462,7 +462,7 @@ set_property -name "options.report_unconstrained" -value "1" -objects $obj
       1. Устанавливает имя стратегии отчетов
       2. Настраивает стратегию отчетов "Vivado Synthesis Default Reports"
    5. Создание отчета об утилизации (utilization report)
-      1. Проверяет существование отчета synth_1_synth_report_utilization_0
+      1. Проверяет существование отчета `synth_1_synth_report_utilization_0`
       2. Создает новый отчет если не существует:
          - Имя: synth_1_synth_report_utilization_0
          - Тип: report_utilization:1.0
@@ -495,7 +495,7 @@ set_property -name "options.report_unconstrained" -value "1" -objects $obj
       1. Устанавливает имя стратегии отчетов
       2. Настраивает стратегию отчетов "Vivado Implementation Default Reports"
    5. Создание отчета временных характеристик (timing summary)
-      1. Проверяет существование отчета impl_1_init_report_timing_summary_0
+      1. Проверяет существование отчета `impl_1_init_report_timing_summary_0`
       2. Создает новый отчет если не существует:
          - Имя: impl_1_init_report_timing_summary_0
          - Тип: report_timing_summary:1.0
@@ -605,7 +605,7 @@ set_property -name "is_enabled" -value "0" -objects $obj
 </details>
 
 1. Создание и настройка отчетов для реализации (impl_1) (300 - 306)
-   1. Отчет о проверке правил проектирования (DRC) после оптимизации (impl_1_opt_report_drc_0) (300 - 306)
+   1. Отчет о проверке правил проектирования (DRC) после оптимизации (`impl_1_opt_report_drc_0`) (300 - 306)
       1. Проверка существования отчета
          1. Проверяет существование отчета через get_report_configs
          2. Создает новый отчет create_report_config при отсутствии:
@@ -614,7 +614,7 @@ set_property -name "is_enabled" -value "0" -objects $obj
             - Запуск: impl_1
       2. Получение ссылки на созданный отчет
 
-   2. Отчет временных характеристик после оптимизации ()(impl_1_opt_report_timing_summary_0) (308 - 317)
+   2. Отчет временных характеристик после оптимизации ()(`impl_1_opt_report_timing_summary_0`) (308 - 317)
       1. Проверка и создание отчета (аналогично DRC)
          1. Тип: report_timing_summary:1.0
       2. Настройка свойств отчета:
@@ -622,7 +622,7 @@ set_property -name "is_enabled" -value "0" -objects $obj
          2. Ограничение количества путей до 10 (options.max_paths)
          3. Включение отчета о несвязанных путях (options.report_unconstrained)
 
-   3. Отчет временных характеристик после оптимизации мощности (impl_1_power_opt_report_timing_summary_0) (319 - 328)
+   3. Отчет временных характеристик после оптимизации мощности (`impl_1_power_opt_report_timing_summary_0`) (319 - 328)
       1. Проверка и создание отчета
          1. Тип: report_timing_summary:1.0
          2. Этап: power_opt_design
@@ -631,24 +631,24 @@ set_property -name "is_enabled" -value "0" -objects $obj
          2. Ограничение путей
          3. Отчет о несвязанных путях
 
-   4. Отчет о вводе-выводе после размещения (impl_1_place_report_io_0) (330 - 336)
+   4. Отчет о вводе-выводе после размещения (`impl_1_place_report_io_0`) (330 - 336)
       1. Проверка и создание отчета
          1. Тип: report_io:1.0
          2. Этап: place_design
       2. Получение ссылки на отчет (без дополнительных настроек)
 
-   5. Отчет об утилизации ресурсов после размещения (impl_1_place_report_utilization_0) (338 - 344)
+   5. Отчет об утилизации ресурсов после размещения (`impl_1_place_report_utilization_0`) (338 - 344)
       1. Проверка и создание отчета
          1. Тип: report_utilization:1.0
       2. Получение ссылки (без настроек)
 
-   6. Отчет о наборах управления после размещения (impl_1_place_report_control_sets_0) (346 - 353)
+   6. Отчет о наборах управления после размещения (`impl_1_place_report_control_sets_0`) (346 - 353)
       1. Проверка и создание отчета
          1. Тип: report_control_sets:1.0
       2. Настройка свойств:
          1. Включение подробного отчета (options.verbose = 1)
 
-   7. Отчеты о повторном использовании при размещении (impl_1_place_report_incremental_reuse_0/1) (355 - 362)
+   7. Отчеты о повторном использовании при размещении (`impl_1_place_report_incremental_reuse_0/1`) (355 - 362)
       1. Проверка и создание двух отчетов:
          1. Тип: report_incremental_reuse:1.0
       2. Настройка свойств:
@@ -730,8 +730,8 @@ if { $obj != "" } {
 
 </details>
 
-1. Создание и настройка отчетов (reports) для этапа имплементации (impl_1)
-   1. Отчет о повторном использовании при размещении (impl_1_place_report_incremental_reuse_1) (364 - 371)
+1. Создание и настройка отчетов (reports) для этапа имплементации (`impl_1`)
+   1. Отчет о повторном использовании при размещении (`impl_1_place_report_incremental_reuse_1`) (364 - 371)
       1. Проверка существования отчета
          1. Проверяет наличие отчета через get_report_configs
          2. Создает новый отчет create_report_config при отсутствии:
@@ -742,7 +742,7 @@ if { $obj != "" } {
          1. Получает ссылку на отчет через get_report_configs
          2. Отключает отчет: is_enabled = 0
 
-   2. Отчет временных характеристик при размещении (impl_1_place_report_timing_summary_0) (373 - 382)
+   2. Отчет временных характеристик при размещении (`impl_1_place_report_timing_summary_0`) (373 - 382)
       1. Проверка и создание отчета
          1. Аналогичная проверка существования
          2. Создание отчета типа report_timing_summary:1.0
@@ -752,7 +752,7 @@ if { $obj != "" } {
             1. Максимальное количество путей для анализа: 10
             2. Включение отчета по несвязанным путям: 1 (включено)
 
-   3. Отчет временных характеристик после оптимизации мощности (impl_1_post_place_power_opt_report_timing_summary_0) (384 - 393)
+   3. Отчет временных характеристик после оптимизации мощности (`impl_1_post_place_power_opt_report_timing_summary_0`) (384 - 393)
       1. Проверка и создание
          1. Для этапа post_place_power_opt_design
       2. Настройка
@@ -761,16 +761,16 @@ if { $obj != "" } {
             2. Макс. путей: 10
             3. Отчет по несвязанным путям
 
-   4. Отчет временных характеристик после физической оптимизации (impl_1_phys_opt_report_timing_summary_0) (395 - 404)
+   4. Отчет временных характеристик после физической оптимизации (`impl_1_phys_opt_report_timing_summary_0`) (395 - 404)
       1. Создание для этапа phys_opt_design
       2. Настройка идентична предыдущим временным отчетам
 
-   5. Отчет проверки правил проектирования (DRC) при трассировке (impl_1_route_report_drc_0) (406 - 412)
+   5. Отчет проверки правил проектирования (DRC) при трассировке (`impl_1_route_report_drc_0`) (406 - 412)
       1. Создание отчета типа report_drc:1.0
       2. Для этапа route_design
       3. Без дополнительных настроек (используются параметры по умолчанию)
 
-   6. Отчет методологии при трассировке (impl_1_route_report_methodology_0) (414 - 420)
+   6. Отчет методологии при трассировке (`impl_1_route_report_methodology_0`) (414 - 420)
       1. Создание отчета типа report_methodology:1.0
       2. Также для этапа route_design
       3. Без модификации параметров
@@ -870,37 +870,37 @@ set_property -name "steps.write_bitstream.args.verbose" -value "0" -objects $obj
 </details>
 
 1. Создание и настройка отчетов маршрутизации (route reports)
-   1. Отчет о мощности (impl_1_route_report_power_0) (422 - 428)
+   1. Отчет о мощности (`impl_1_route_report_power_0`) (422 - 428)
       1. Проверка существования отчета через get_report_configs
       2. Создание нового отчета при отсутствии через create_report_config:
          1. Тип: report_power:1.0
          2. Этап: route_design
          3. Запуск: impl_1
 
-   2. Отчет о статусе маршрутизации (impl_1_route_report_route_status_0) (430 - 436)
+   2. Отчет о статусе маршрутизации (`impl_1_route_report_route_status_0`) (430 - 436)
       2. Создание при необходимости:
          1. Тип: report_route_status:1.0
          2. Этап: route_design
 
-   3. Отчет временных характеристик (impl_1_route_report_timing_summary_0) (438 - 446)
+   3. Отчет временных характеристик (`impl_1_route_report_timing_summary_0`) (438 - 446)
       1. Проверка и создание (тип report_timing_summary:1.0)
       2. Настройка свойств:
          1. Ограничение количества путей (options.max_paths = 10)
          2. Включение отчета о неограниченных путях (options.report_unconstrained = 1)
 
-   4. Отчет инкрементального повторного использования (impl_1_route_report_incremental_reuse_0) (448 - 454)
+   4. Отчет инкрементального повторного использования (`impl_1_route_report_incremental_reuse_0`) (448 - 454)
       1. Проверка и создание (тип report_incremental_reuse:1.0)
 
-   5. Отчет использования тактовых сигналов (impl_1_route_report_clock_utilization_0) (456 - 462)
+   5. Отчет использования тактовых сигналов (`impl_1_route_report_clock_utilization_0`) (456 - 462)
       1. Проверка и создание (тип report_clock_utilization:1.0)
 
-   6. Отчет перекоса шины (impl_1_route_report_bus_skew_0) (464 - 471)
+   6. Отчет перекоса шины (`impl_1_route_report_bus_skew_0`) (464 - 471)
       1. Проверка и создание (тип report_bus_skew:1.1)
       2. Настройка:
          1. Включение предупреждений о нарушениях (options.warn_on_violation = 1)
 
 2. Отчеты после физической оптимизации (post-route phys opt reports) 
-   1. Отчет временных характеристик (473 - 482)(impl_1_post_route_phys_opt_report_timing_summary_0)
+   1. Отчет временных характеристик (473 - 482)(`impl_1_post_route_phys_opt_report_timing_summary_0)`
       1. Проверка и создание (тип report_timing_summary:1.0)
       2. Настройка:
          1. Ограничение путей (max_paths = 10)
