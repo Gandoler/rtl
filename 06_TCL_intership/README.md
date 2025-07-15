@@ -4,8 +4,16 @@
 
 ```TCL
 call  C:\Xilinx\Vivado\2023.1\settings64.bat
-vivado -mode=batch -nojournal -nolog -source C:\Users\glkru\intership\Internship\06_TCL_intership\demoproject.tcl
+vivado -mode batch -nojournal -nolog -source C:\Users\glkru\intership\Internship\06_TCL_intership\demoproject.tcl -tclargs --origin_dir "C:\Users\glkru\intership\Internship\06_TCL_intership"
 
+```
+
+## num0
+
+```TCL
+call  C:\Xilinx\Vivado\2023.1\settings64.bat
+C:\Users\glkru\intership\Internship\06_TCL_intership\Tasks\num_1.tcl
+vivado -mode gui -source "C:\Users\glkru\intership\Internship\06_TCL_intership\Tasks\num_1.tcl"
 ```
 
 ## разбор сгенерированного скрипта
