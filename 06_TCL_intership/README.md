@@ -12,9 +12,9 @@ vivado -mode=batch -nojournal -nolog -source C:\Users\glkru\intership\Internship
 
 
 
-###  процедура checkRequiredFiles
+###  процедура checkRequiredFiles (38-72)
 
- ```md
+ ```TCL
 
 proc checkRequiredFiles { origin_dir} {
   set status true
@@ -67,7 +67,7 @@ set script_file "demoproject.tcl"
 3. запись названия скрипта
 
 
-###  процедура print_help
+###  процедура print_help (75-155)
 
 ```TCL
 proc print_help {} {
@@ -170,6 +170,7 @@ set_property -name "simulator_language" -value "Mixed" -objects $obj
 set_property -name "sim_compile_state" -value "1" -objects $obj
 
 ```
+
 1. Обработка аргументов командной строки
    1. Проверяет, есть ли аргументы ($::argc > 0)
    2. Перебирает все аргументы в цикле
@@ -203,5 +204,298 @@ set_property -name "sim_compile_state" -value "1" -objects $obj
       6. Язык симулятора: Mixed (смешанный)
       7. И другие специфичные настройки Vivado
 
-###  основной код часть 2
+###  основной код часть 2 (158 - 242)
 
+```TCL
+
+
+# Create 'sources_1' fileset (if not found)
+if {[string equal [get_filesets -quiet sources_1] ""]} {
+  create_fileset -srcset sources_1
+}
+
+# Set 'sources_1' fileset object
+set obj [get_filesets sources_1]
+set files [list \
+ [file normalize "${origin_dir}/source_files/demo.sv"] \
+ [file normalize "${origin_dir}/source_files/demo_wrapper_nexys_a7.sv"] \
+]
+add_files -norecurse -fileset $obj $files
+
+# Set 'sources_1' fileset file properties for remote files
+set file "$origin_dir/source_files/demo.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/source_files/demo_wrapper_nexys_a7.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+
+# Set 'sources_1' fileset file properties for local files
+# None
+
+# Set 'sources_1' fileset properties
+set obj [get_filesets sources_1]
+set_property -name "dataflow_viewer_settings" -value "min_width=16" -objects $obj
+set_property -name "top" -value "demo_wrapper_nexys_a7" -objects $obj
+
+# Create 'constrs_1' fileset (if not found)
+if {[string equal [get_filesets -quiet constrs_1] ""]} {
+  create_fileset -constrset constrs_1
+}
+
+# Set 'constrs_1' fileset object
+set obj [get_filesets constrs_1]
+
+# Add/Import constrs file and set constrs file properties
+set file "[file normalize "$origin_dir/source_files/Nexys-A7-100T-Master.xdc"]"
+set file_added [add_files -norecurse -fileset $obj [list $file]]
+set file "$origin_dir/source_files/Nexys-A7-100T-Master.xdc"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets constrs_1] [list "*$file"]]
+set_property -name "file_type" -value "XDC" -objects $file_obj
+
+# Set 'constrs_1' fileset properties
+set obj [get_filesets constrs_1]
+set_property -name "target_part" -value "xc7a100tcsg324-1" -objects $obj
+
+# Create 'sim_1' fileset (if not found)
+if {[string equal [get_filesets -quiet sim_1] ""]} {
+  create_fileset -simset sim_1
+}
+
+# Set 'sim_1' fileset object
+set obj [get_filesets sim_1]
+set files [list \
+ [file normalize "${origin_dir}/source_files/tb_demo.sv"] \
+]
+add_files -norecurse -fileset $obj $files
+
+# Set 'sim_1' fileset file properties for remote files
+set file "$origin_dir/source_files/tb_demo.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+
+# Set 'sim_1' fileset file properties for local files
+# None
+
+# Set 'sim_1' fileset properties
+set obj [get_filesets sim_1]
+set_property -name "top" -value "demo_wrapper_nexys_a7" -objects $obj
+set_property -name "top_lib" -value "xil_defaultlib" -objects $obj
+
+# Set 'utils_1' fileset object
+set obj [get_filesets utils_1]
+# Empty (no sources present)
+
+# Set 'utils_1' fileset properties
+set obj [get_filesets utils_1]
+```
+
+1. Создание и настройка файловых наборов (filesets)
+   1. Набор исходных файлов (sources_1)
+      1. Проверка и создание набора
+         1. Проверяет существование набора sources_1 через get_filesets -quiet
+         2. Создает новый набор create_fileset -srcset при отсутствии
+      2. Добавление исходных файлов
+         1. Получает ссылку на набор через get_filesets
+         2. Формирует список файлов с нормализацией путей:
+            1. demo.sv
+            2. demo_wrapper_nexys_a7.sv
+         3. Добавляет файлы через add_files -norecurse
+      3. Настройка свойств файлов
+         1. Для каждого файла устанавливает:
+            1. Тип файла: SystemVerilog
+      4. Настройка свойств набора
+         1. Параметры просмотра потоков данных: min_width=16
+         2. Установка верхнего уровня иерархии: demo_wrapper_nexys_a7
+
+   2. Набор файлов ограничений (constrs_1)
+      1. Проверка и создание набора
+         1. Аналогичная проверка через get_filesets -quiet
+         2. Создание create_fileset -constrset при необходимости
+      2. Добавление файла ограничений
+         1. Добавляет Nexys-A7-100T-Master.xdc
+         2. Нормализует путь к файлу
+      3. Настройка свойств
+         1. Тип файла: XDC (Xilinx Design Constraints)
+         2. Целевая плата: xc7a100tcsg324-1
+
+   3. Набор файлов симуляции (sim_1)
+      1. Проверка и создание набора
+         1. Стандартная проверка существования
+         2. Создание create_fileset -simset при отсутствии
+      2. Добавление тестового файла
+         1. Добавляет tb_demo.sv
+      3. Настройка свойств
+         1. Тип файла: SystemVerilog
+         2. Верхний уровень для симуляции: demo_wrapper_nexys_a7
+         3. Целевая библиотека: xil_defaultlib
+
+   4. Утилитарный набор (utils_1)
+      1. Получение ссылки на набор
+      2. (В текущем скрипте остается пустым для будущего использования)
+
+#### Небольшое обьяснение:
+
+utils_1 — это "служебный" набор для управления проектом через скрипты.
+
+* Если проект простой — он может оставаться пустым.
+* Если нужна автоматизация — в него добавляют TCL/Python-скрипты для пред- и пост-обработки.
+
+
+###  основной код часть 3 (244 - 298)
+
+
+```TCL
+set idrFlowPropertiesConstraints ""
+catch {
+ set idrFlowPropertiesConstraints [get_param runs.disableIDRFlowPropertyConstraints]
+ set_param runs.disableIDRFlowPropertyConstraints 1
+}
+
+# Create 'synth_1' run (if not found)
+if {[string equal [get_runs -quiet synth_1] ""]} {
+    create_run -name synth_1 -part xc7a100tcsg324-1 -flow {Vivado Synthesis 2023} -strategy "Vivado Synthesis Defaults" -report_strategy {No Reports} -constrset constrs_1
+} else {
+  set_property strategy "Vivado Synthesis Defaults" [get_runs synth_1]
+  set_property flow "Vivado Synthesis 2023" [get_runs synth_1]
+}
+set obj [get_runs synth_1]
+set_property set_report_strategy_name 1 $obj
+set_property report_strategy {Vivado Synthesis Default Reports} $obj
+set_property set_report_strategy_name 0 $obj
+# Create 'synth_1_synth_report_utilization_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs synth_1] synth_1_synth_report_utilization_0] "" ] } {
+  create_report_config -report_name synth_1_synth_report_utilization_0 -report_type report_utilization:1.0 -steps synth_design -runs synth_1
+}
+set obj [get_report_configs -of_objects [get_runs synth_1] synth_1_synth_report_utilization_0]
+if { $obj != "" } {
+
+}
+set obj [get_runs synth_1]
+set_property -name "part" -value "xc7a100tcsg324-1" -objects $obj
+set_property -name "auto_incremental_checkpoint" -value "1" -objects $obj
+set_property -name "strategy" -value "Vivado Synthesis Defaults" -objects $obj
+
+# set the current synth run
+current_run -synthesis [get_runs synth_1]
+
+# Create 'impl_1' run (if not found)
+if {[string equal [get_runs -quiet impl_1] ""]} {
+    create_run -name impl_1 -part xc7a100tcsg324-1 -flow {Vivado Implementation 2023} -strategy "Vivado Implementation Defaults" -report_strategy {No Reports} -constrset constrs_1 -parent_run synth_1
+} else {
+  set_property strategy "Vivado Implementation Defaults" [get_runs impl_1]
+  set_property flow "Vivado Implementation 2023" [get_runs impl_1]
+}
+set obj [get_runs impl_1]
+set_property set_report_strategy_name 1 $obj
+set_property report_strategy {Vivado Implementation Default Reports} $obj
+set_property set_report_strategy_name 0 $obj
+# Create 'impl_1_init_report_timing_summary_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_init_report_timing_summary_0] "" ] } {
+  create_report_config -report_name impl_1_init_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps init_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_init_report_timing_summary_0]
+if { $obj != "" } {
+set_property -name "is_enabled" -value "0" -objects $obj
+set_property -name "options.max_paths" -value "10" -objects $obj
+set_property -name "options.report_unconstrained" -value "1" -objects $obj
+
+}
+```
+
+
+Вот объяснение предоставленного кода в запрошенном формате:
+
+1. Настройка параметров IDR Flow Properties (242 - 248)
+   1. Инициализация переменной
+      1. Создается переменная idrFlowPropertiesConstraints с пустым значением
+   2. Блок обработки ошибок (catch)
+      1. Пытается получить текущее значение параметра runs.disableIDRFlowPropertyConstraints
+      2. Устанавливает параметр runs.disableIDRFlowPropertyConstraints в 1
+         (отключает ограничения свойств потока IDR)
+
+2. Создание и настройка запуска синтеза (synth_1) (251 - 277)
+   1. Проверка существования запуска
+      1. Проверяет существование запуска synth_1 через get_runs -quiet
+   2. Создание нового запуска (если не существует)
+      1. Создает запуск create_run с параметрами:
+         - Имя: synth_1
+         - Плата: xc7a100tcsg324-1
+         - Поток: Vivado Synthesis 2023
+         - Стратегия: Vivado Synthesis Defaults
+         - Без отчетов
+         - Набор ограничений: constrs_1
+   3. Настройка существующего запуска (если существует)
+      1. Устанавливает стратегию "Vivado Synthesis Defaults"
+      2. Устанавливает поток "Vivado Synthesis 2023"
+   4. Настройка отчетов для запуска
+      1. Устанавливает имя стратегии отчетов
+      2. Настраивает стратегию отчетов "Vivado Synthesis Default Reports"
+   5. Создание отчета об утилизации (utilization report)
+      1. Проверяет существование отчета synth_1_synth_report_utilization_0
+      2. Создает новый отчет если не существует:
+         - Имя: synth_1_synth_report_utilization_0
+         - Тип: report_utilization:1.0
+         - Шаги: synth_design
+         - Для запуска: synth_1
+   6. Дополнительные настройки запуска
+      1. Устанавливает параметры:
+         - Плата: xc7a100tcsg324-1
+         - Автоинкрементные контрольные точки: 1
+         - Стратегия: Vivado Synthesis Defaults
+   7. Установка текущего запуска синтеза
+      1. Устанавливает synth_1 как текущий запуск синтеза
+
+3. Создание и настройка запуска имплементации (impl_1)  (278 - 298)
+   1. Проверка существования запуска
+      1. Проверяет существование запуска impl_1 через get_runs -quiet
+   2. Создание нового запуска (если не существует)
+      1. Создает запуск create_run с параметрами:
+         - Имя: impl_1
+         - Плата: xc7a100tcsg324-1
+         - Поток: Vivado Implementation 2023
+         - Стратегия: Vivado Implementation Defaults
+         - Без отчетов
+         - Набор ограничений: constrs_1
+         - Родительский запуск: synth_1
+   3. Настройка существующего запуска (если существует)
+      1. Устанавливает стратегию "Vivado Implementation Defaults"
+      2. Устанавливает поток "Vivado Implementation 2023"
+   4. Настройка отчетов для запуска
+      1. Устанавливает имя стратегии отчетов
+      2. Настраивает стратегию отчетов "Vivado Implementation Default Reports"
+   5. Создание отчета временных характеристик (timing summary)
+      1. Проверяет существование отчета impl_1_init_report_timing_summary_0
+      2. Создает новый отчет если не существует:
+         - Имя: impl_1_init_report_timing_summary_0
+         - Тип: report_timing_summary:1.0
+         - Шаги: init_design
+         - Для запуска: impl_1
+   6. Настройка отчета временных характеристик
+      1. Отключает отчет по умолчанию (is_enabled = 0)
+      2. Устанавливает максимальное количество путей: 10
+      3. Включает отчет о несвязанных путях
+
+
+#### Небольшое обьяснение:
+
+1. IDR (Interactive Design Rule) Flow — это механизм в Vivado, который:
+   1. Автоматически применяет дополнительные проверки и ограничения во время синтеза и имплементации.
+   2. Может влиять на оптимизацию, размещение и маршрутизацию (Place & Route).
+   3. Иногда мешает ручной настройке или требует дополнительных ресурсов.
+
+2. Параметр disableIDRFlowPropertyConstraints:
+
+   * 0 (по умолчанию) → Vivado применяет дополнительные проверки IDR.
+   * 1 → Vivado отключает часть этих проверок, давая больше свободы при реализации дизайна.
+
+3. В  TCL блок try-catch обьеденен в один блок  catch
+
+###  основной код часть 4 (244 - 298)
