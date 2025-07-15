@@ -14,6 +14,9 @@ vivado -mode=batch -nojournal -nolog -source C:\Users\glkru\intership\Internship
 
 ###  процедура checkRequiredFiles (38-72)
 
+<details>
+  <summary>Посмотреть код</summary>
+
  ```TCL
 
 proc checkRequiredFiles { origin_dir} {
@@ -54,6 +57,8 @@ set script_file "demoproject.tcl"
 
  ```
 
+</details>
+
 1. proc -  означает объявление процедуры checkRequiredFiles { origin_dir}, которая принимает на вход базовую директорию
 2. Базово задает статус  true
 3. Создает список необходимых файлов и пути к ним
@@ -68,6 +73,9 @@ set script_file "demoproject.tcl"
 
 
 ###  процедура print_help (75-155)
+
+<details>
+  <summary>Посмотреть код</summary>
 
 ```TCL
 proc print_help {} {
@@ -99,6 +107,8 @@ proc print_help {} {
 
 ```
 
+</details>
+
 Эта процедура будет вызываться, когда пользователь запускает скрипт с аргументом --help. Она предоставляет полную информацию о:
 
 1. Назначении скрипта
@@ -111,6 +121,9 @@ proc print_help {} {
 
 
 ###  основной код часть 1
+
+<details>
+  <summary>Посмотреть код</summary>
 
 ```TCL
 
@@ -171,6 +184,8 @@ set_property -name "sim_compile_state" -value "1" -objects $obj
 
 ```
 
+</details>
+
 1. Обработка аргументов командной строки
    1. Проверяет, есть ли аргументы ($::argc > 0)
    2. Перебирает все аргументы в цикле
@@ -205,6 +220,9 @@ set_property -name "sim_compile_state" -value "1" -objects $obj
       7. И другие специфичные настройки Vivado
 
 ###  основной код часть 2 (158 - 242)
+
+<details>
+  <summary>Посмотреть код</summary>
 
 ```TCL
 
@@ -297,6 +315,8 @@ set obj [get_filesets utils_1]
 set obj [get_filesets utils_1]
 ```
 
+</details>
+
 1. Создание и настройка файловых наборов (filesets)
    1. Набор исходных файлов (sources_1) (158 - 188)
       1. Проверка и создание набора
@@ -351,6 +371,8 @@ utils_1 — это "служебный" набор для управления �
 
 ###  основной код часть 3 (244 - 298)
 
+<details>
+  <summary>Посмотреть код</summary>
 
 ```TCL
 set idrFlowPropertiesConstraints ""
@@ -410,6 +432,7 @@ set_property -name "options.report_unconstrained" -value "1" -objects $obj
 }
 ```
 
+</details>
 
 Вот объяснение предоставленного кода в запрошенном формате:
 
@@ -500,6 +523,9 @@ set_property -name "options.report_unconstrained" -value "1" -objects $obj
 
 ###  основной код часть 4 (300 - 362)
 
+<details>
+  <summary>Посмотреть код</summary>
+
 ```TCL
 # Create 'impl_1_opt_report_drc_0' report (if not found)
 if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_opt_report_drc_0] "" ] } {
@@ -576,7 +602,7 @@ set_property -name "is_enabled" -value "0" -objects $obj
 }
 ```
 
-
+</details>
 
 1. Создание и настройка отчетов для реализации (impl_1) (300 - 306)
    1. Отчет о проверке правил проектирования (DRC) после оптимизации (impl_1_opt_report_drc_0) (300 - 306)
@@ -639,7 +665,7 @@ set_property -name "is_enabled" -value "0" -objects $obj
 ###  основной код часть 5 (363 - 420)
 
 <details>
-  <summary>Spoiler warning</summary>
+  <summary>Посмотреть код</summary>
 
 ```TCL
 # Create 'impl_1_place_report_incremental_reuse_1' report (if not found)
