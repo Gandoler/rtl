@@ -18,5 +18,6 @@ if {[file exists $project_path]} {
 
 
     open_run impl_1
-    display_report utilization_report.txt
+    report_utilization -name utilization_1
+    report_timing_summary -name timing_1
 }
