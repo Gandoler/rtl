@@ -869,3 +869,186 @@ set_property -name "steps.write_bitstream.args.verbose" -value "0" -objects $obj
 
 </details>
 
+1. Создание и настройка отчетов маршрутизации (route reports)
+   1. Отчет о мощности (impl_1_route_report_power_0) (422 - 428)
+      1. Проверка существования отчета через get_report_configs
+      2. Создание нового отчета при отсутствии через create_report_config:
+         1. Тип: report_power:1.0
+         2. Этап: route_design
+         3. Запуск: impl_1
+
+   2. Отчет о статусе маршрутизации (impl_1_route_report_route_status_0) (430 - 436)
+      2. Создание при необходимости:
+         1. Тип: report_route_status:1.0
+         2. Этап: route_design
+
+   3. Отчет временных характеристик (impl_1_route_report_timing_summary_0) (438 - 446)
+      1. Проверка и создание (тип report_timing_summary:1.0)
+      2. Настройка свойств:
+         1. Ограничение количества путей (options.max_paths = 10)
+         2. Включение отчета о неограниченных путях (options.report_unconstrained = 1)
+
+   4. Отчет инкрементального повторного использования (impl_1_route_report_incremental_reuse_0) (448 - 454)
+      1. Проверка и создание (тип report_incremental_reuse:1.0)
+
+   5. Отчет использования тактовых сигналов (impl_1_route_report_clock_utilization_0) (456 - 462)
+      1. Проверка и создание (тип report_clock_utilization:1.0)
+
+   6. Отчет перекоса шины (impl_1_route_report_bus_skew_0) (464 - 471)
+      1. Проверка и создание (тип report_bus_skew:1.1)
+      2. Настройка:
+         1. Включение предупреждений о нарушениях (options.warn_on_violation = 1)
+
+2. Отчеты после физической оптимизации (post-route phys opt reports) 
+   1. Отчет временных характеристик (473 - 482)(impl_1_post_route_phys_opt_report_timing_summary_0)
+      1. Проверка и создание (тип report_timing_summary:1.0)
+      2. Настройка:
+         1. Ограничение путей (max_paths = 10)
+         2. Отчет о неограниченных путях
+         3. Включение предупреждений о нарушениях
+
+   2. Отчет перекоса шины (impl_1_post_route_phys_opt_report_bus_skew_0) (484 - 491)
+      1. Проверка и создание (тип report_bus_skew:1.1)
+      2. Включение предупреждений о нарушениях
+
+3. Настройка параметров запуска (`impl_1 run settings`) (492 - 496)
+   1. Установка целевой микросхемы (part = xc7a100tcsg324-1)
+   2. Установка стратегии реализации (strategy = Vivado Implementation Defaults)
+   3. Настройка параметров генерации битстрима:
+      1. Отключение файла обратного чтения (readback_file = 0)
+      2. Отключение подробного вывода (verbose = 0)
+
+
+#### Небольшая понималка:
+1. Что такое перекос шины (Bus Skew)?
+Шина — это группа сигналов, передающих связанные данные (например, data[7:0] для байта).
+
+Перекос (skew) — разница во времени прихода сигналов шины из-за разной длины трасс, задержек буферов и других факторов.
+
+2. Ограничение max_paths=10 выводит только 10 самых критичных путей (с наибольшими задержками).
+
+###  основной код часть 7 (499 - 556)
+
+<details>
+  <summary>Посмотреть код</summary>
+
+```TCL
+# set the current impl run
+current_run -implementation [get_runs impl_1]
+catch {
+ if { $idrFlowPropertiesConstraints != {} } {
+   set_param runs.disableIDRFlowPropertyConstraints $idrFlowPropertiesConstraints
+ }
+}
+
+puts "INFO: Project created:${_xil_proj_name_}"
+# Create 'drc_1' gadget (if not found)
+if {[string equal [get_dashboard_gadgets  [ list "drc_1" ] ] ""]} {
+create_dashboard_gadget -name {drc_1} -type drc
+}
+set obj [get_dashboard_gadgets [ list "drc_1" ] ]
+set_property -name "reports" -value "impl_1#impl_1_route_report_drc_0" -objects $obj
+
+# Create 'methodology_1' gadget (if not found)
+if {[string equal [get_dashboard_gadgets  [ list "methodology_1" ] ] ""]} {
+create_dashboard_gadget -name {methodology_1} -type methodology
+}
+set obj [get_dashboard_gadgets [ list "methodology_1" ] ]
+set_property -name "reports" -value "impl_1#impl_1_route_report_methodology_0" -objects $obj
+
+# Create 'power_1' gadget (if not found)
+if {[string equal [get_dashboard_gadgets  [ list "power_1" ] ] ""]} {
+create_dashboard_gadget -name {power_1} -type power
+}
+set obj [get_dashboard_gadgets [ list "power_1" ] ]
+set_property -name "reports" -value "impl_1#impl_1_route_report_power_0" -objects $obj
+
+# Create 'timing_1' gadget (if not found)
+if {[string equal [get_dashboard_gadgets  [ list "timing_1" ] ] ""]} {
+create_dashboard_gadget -name {timing_1} -type timing
+}
+set obj [get_dashboard_gadgets [ list "timing_1" ] ]
+set_property -name "reports" -value "impl_1#impl_1_route_report_timing_summary_0" -objects $obj
+
+# Create 'utilization_1' gadget (if not found)
+if {[string equal [get_dashboard_gadgets  [ list "utilization_1" ] ] ""]} {
+create_dashboard_gadget -name {utilization_1} -type utilization
+}
+set obj [get_dashboard_gadgets [ list "utilization_1" ] ]
+set_property -name "reports" -value "synth_1#synth_1_synth_report_utilization_0" -objects $obj
+set_property -name "run.step" -value "synth_design" -objects $obj
+set_property -name "run.type" -value "synthesis" -objects $obj
+
+# Create 'utilization_2' gadget (if not found)
+if {[string equal [get_dashboard_gadgets  [ list "utilization_2" ] ] ""]} {
+create_dashboard_gadget -name {utilization_2} -type utilization
+}
+set obj [get_dashboard_gadgets [ list "utilization_2" ] ]
+set_property -name "reports" -value "impl_1#impl_1_place_report_utilization_0" -objects $obj
+
+move_dashboard_gadget -name {utilization_1} -row 0 -col 0
+move_dashboard_gadget -name {power_1} -row 1 -col 0
+move_dashboard_gadget -name {drc_1} -row 2 -col 0
+move_dashboard_gadget -name {timing_1} -row 0 -col 1
+move_dashboard_gadget -name {utilization_2} -row 1 -col 1
+move_dashboard_gadget -name {methodology_1} -row 2 -col 1
+
+```
+
+</details>
+
+1. Установка текущего запуска имплементации
+   1. Установка активного запуска
+      1. Команда `current_run -implementation` устанавливает impl_1 как текущий запуск имплементации
+   2. Обработка специальных параметров
+      1. Блок `catch` обрабатывает возможные ошибки
+      2. Проверяет наличие параметров IDR flow (`idrFlowPropertiesConstraints`)
+      3. При необходимости отключает ограничения IDR flow через `set_param`
+
+2. Вывод информации о проекте
+   1. Выводит сообщение в консоль с именем проекта (`${_xil_proj_name_}`)
+
+3. Создание и настройка дашборд-гаджетов
+   1. Гаджет DRC (Design Rule Checks)
+      1. Проверка существования (`get_dashboard_gadgets`)
+      2. Создание при отсутствии (`create_dashboard_gadget -type drc`)
+      3. Настройка отчетов:
+         1. Привязка к отчету DRC из impl_1 (`impl_1_route_report_drc_0`)
+
+   2. Гаджет Methodology
+      1. Аналогичная проверка и создание (`-type methodology`)
+      2. Настройка отчетов:
+         1. Привязка к отчету methodology из impl_1
+
+   3. Гаджет Power
+      1. Проверка и создание (`-type power`)
+      2. Настройка отчетов:
+         1. Привязка к отчету power из impl_1
+
+   4. Гаджет Timing
+      1. Проверка и создание (`-type timing`)
+      2. Настройка отчетов:
+         1. Привязка к отчету timing summary из impl_1
+
+   5. Гаджет Utilization (1)
+      1. Проверка и создание (`-type utilization`)
+      2. Настройка отчетов:
+         1. Привязка к отчету утилизации из synth_1
+      3. Дополнительные настройки:
+         1. Установка шага (`synth_design`)
+         2. Установка типа запуска (`synthesis`)
+
+   6. Гаджет Utilization (2)
+      1. Проверка и создание второго гаджета utilization
+      2. Настройка отчетов:
+         1. Привязка к отчету утилизации размещения из impl_1
+
+4. Расположение гаджетов на дашборде
+   1. Управление позиционированием через `move_dashboard_gadget`
+      1. Первый utilization - строка 0, колонка 0
+      2. Power - строка 1, колонка 0
+      3. DRC - строка 2, колонка 0
+      4. Timing - строка 0, колонка 1
+      5. Второй utilization - строка 1, колонка 1
+      6. Methodology - строка 2, колонка 1
+
