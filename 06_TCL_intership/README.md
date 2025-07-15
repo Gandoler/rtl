@@ -298,7 +298,7 @@ set obj [get_filesets utils_1]
 ```
 
 1. Создание и настройка файловых наборов (filesets)
-   1. Набор исходных файлов (sources_1)
+   1. Набор исходных файлов (sources_1) (158 - 188)
       1. Проверка и создание набора
          1. Проверяет существование набора sources_1 через get_filesets -quiet
          2. Создает новый набор create_fileset -srcset при отсутствии
@@ -315,7 +315,7 @@ set obj [get_filesets utils_1]
          1. Параметры просмотра потоков данных: min_width=16
          2. Установка верхнего уровня иерархии: demo_wrapper_nexys_a7
 
-   2. Набор файлов ограничений (constrs_1)
+   2. Набор файлов ограничений (constrs_1) (191 - 208)
       1. Проверка и создание набора
          1. Аналогичная проверка через get_filesets -quiet
          2. Создание create_fileset -constrset при необходимости
@@ -326,7 +326,7 @@ set obj [get_filesets utils_1]
          1. Тип файла: XDC (Xilinx Design Constraints)
          2. Целевая плата: xc7a100tcsg324-1
 
-   3. Набор файлов симуляции (sim_1)
+   3. Набор файлов симуляции (sim_1) (211 - 235)
       1. Проверка и создание набора
          1. Стандартная проверка существования
          2. Создание create_fileset -simset при отсутствии
@@ -337,7 +337,7 @@ set obj [get_filesets utils_1]
          2. Верхний уровень для симуляции: demo_wrapper_nexys_a7
          3. Целевая библиотека: xil_defaultlib
 
-   4. Утилитарный набор (utils_1)
+   4. Утилитарный набор (utils_1) (242 - 248)
       1. Получение ссылки на набор
       2. (В текущем скрипте остается пустым для будущего использования)
 
@@ -498,4 +498,259 @@ set_property -name "options.report_unconstrained" -value "1" -objects $obj
 
 3. В  TCL блок try-catch обьеденен в один блок  catch
 
-###  основной код часть 4 (244 - 298)
+###  основной код часть 4 (300 - 362)
+
+```TCL
+# Create 'impl_1_opt_report_drc_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_opt_report_drc_0] "" ] } {
+  create_report_config -report_name impl_1_opt_report_drc_0 -report_type report_drc:1.0 -steps opt_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_opt_report_drc_0]
+if { $obj != "" } {
+
+}
+# Create 'impl_1_opt_report_timing_summary_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_opt_report_timing_summary_0] "" ] } {
+  create_report_config -report_name impl_1_opt_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps opt_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_opt_report_timing_summary_0]
+if { $obj != "" } {
+set_property -name "is_enabled" -value "0" -objects $obj
+set_property -name "options.max_paths" -value "10" -objects $obj
+set_property -name "options.report_unconstrained" -value "1" -objects $obj
+
+}
+# Create 'impl_1_power_opt_report_timing_summary_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_power_opt_report_timing_summary_0] "" ] } {
+  create_report_config -report_name impl_1_power_opt_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps power_opt_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_power_opt_report_timing_summary_0]
+if { $obj != "" } {
+set_property -name "is_enabled" -value "0" -objects $obj
+set_property -name "options.max_paths" -value "10" -objects $obj
+set_property -name "options.report_unconstrained" -value "1" -objects $obj
+
+}
+# Create 'impl_1_place_report_io_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_io_0] "" ] } {
+  create_report_config -report_name impl_1_place_report_io_0 -report_type report_io:1.0 -steps place_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_io_0]
+if { $obj != "" } {
+
+}
+# Create 'impl_1_place_report_utilization_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_utilization_0] "" ] } {
+  create_report_config -report_name impl_1_place_report_utilization_0 -report_type report_utilization:1.0 -steps place_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_utilization_0]
+if { $obj != "" } {
+
+}
+# Create 'impl_1_place_report_control_sets_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_control_sets_0] "" ] } {
+  create_report_config -report_name impl_1_place_report_control_sets_0 -report_type report_control_sets:1.0 -steps place_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_control_sets_0]
+if { $obj != "" } {
+set_property -name "options.verbose" -value "1" -objects $obj
+
+}
+# Create 'impl_1_place_report_incremental_reuse_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_incremental_reuse_0] "" ] } {
+  create_report_config -report_name impl_1_place_report_incremental_reuse_0 -report_type report_incremental_reuse:1.0 -steps place_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_incremental_reuse_0]
+if { $obj != "" } {
+set_property -name "is_enabled" -value "0" -objects $obj
+
+}
+# Create 'impl_1_place_report_incremental_reuse_1' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_incremental_reuse_1] "" ] } {
+  create_report_config -report_name impl_1_place_report_incremental_reuse_1 -report_type report_incremental_reuse:1.0 -steps place_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_incremental_reuse_1]
+if { $obj != "" } {
+set_property -name "is_enabled" -value "0" -objects $obj
+
+}
+```
+
+
+
+1. Создание и настройка отчетов для реализации (impl_1) (300 - 306)
+   1. Отчет о проверке правил проектирования (DRC) после оптимизации (impl_1_opt_report_drc_0) (300 - 306)
+      1. Проверка существования отчета
+         1. Проверяет существование отчета через get_report_configs
+         2. Создает новый отчет create_report_config при отсутствии:
+            - Тип: report_drc:1.0
+            - Этап: opt_design
+            - Запуск: impl_1
+      2. Получение ссылки на созданный отчет
+
+   2. Отчет временных характеристик после оптимизации ()(impl_1_opt_report_timing_summary_0) (308 - 317)
+      1. Проверка и создание отчета (аналогично DRC)
+         1. Тип: report_timing_summary:1.0
+      2. Настройка свойств отчета:
+         1. Отключение отчета по умолчанию (is_enabled = 0)
+         2. Ограничение количества путей до 10 (options.max_paths)
+         3. Включение отчета о несвязанных путях (options.report_unconstrained)
+
+   3. Отчет временных характеристик после оптимизации мощности (impl_1_power_opt_report_timing_summary_0) (319 - 328)
+      1. Проверка и создание отчета
+         1. Тип: report_timing_summary:1.0
+         2. Этап: power_opt_design
+      2. Настройка свойств (аналогично предыдущему отчету):
+         1. Отключение по умолчанию
+         2. Ограничение путей
+         3. Отчет о несвязанных путях
+
+   4. Отчет о вводе-выводе после размещения (impl_1_place_report_io_0) (330 - 336)
+      1. Проверка и создание отчета
+         1. Тип: report_io:1.0
+         2. Этап: place_design
+      2. Получение ссылки на отчет (без дополнительных настроек)
+
+   5. Отчет об утилизации ресурсов после размещения (impl_1_place_report_utilization_0) (338 - 344)
+      1. Проверка и создание отчета
+         1. Тип: report_utilization:1.0
+      2. Получение ссылки (без настроек)
+
+   6. Отчет о наборах управления после размещения (impl_1_place_report_control_sets_0) (346 - 353)
+      1. Проверка и создание отчета
+         1. Тип: report_control_sets:1.0
+      2. Настройка свойств:
+         1. Включение подробного отчета (options.verbose = 1)
+
+   7. Отчеты о повторном использовании при размещении (impl_1_place_report_incremental_reuse_0/1) (355 - 362)
+      1. Проверка и создание двух отчетов:
+         1. Тип: report_incremental_reuse:1.0
+      2. Настройка свойств:
+         1. Отключение отчетов по умолчанию (is_enabled = 0)
+
+#### Особенности:
+
+Все отчеты связаны с запуском impl_1
+
+* Для временных отчетов установлено ограничение на количество отображаемых путей
+* Некоторые отчеты отключены по умолчанию для уменьшения времени выполнения
+* Отчеты создаются только при их отсутствии (проверка через string equal)
+
+###  основной код часть 5 (363 - 420)
+
+<details>
+  <summary>Spoiler warning</summary>
+
+```TCL
+# Create 'impl_1_place_report_incremental_reuse_1' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_incremental_reuse_1] "" ] } {
+  create_report_config -report_name impl_1_place_report_incremental_reuse_1 -report_type report_incremental_reuse:1.0 -steps place_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_incremental_reuse_1]
+if { $obj != "" } {
+set_property -name "is_enabled" -value "0" -objects $obj
+
+}
+# Create 'impl_1_place_report_timing_summary_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_timing_summary_0] "" ] } {
+  create_report_config -report_name impl_1_place_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps place_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_place_report_timing_summary_0]
+if { $obj != "" } {
+set_property -name "is_enabled" -value "0" -objects $obj
+set_property -name "options.max_paths" -value "10" -objects $obj
+set_property -name "options.report_unconstrained" -value "1" -objects $obj
+
+}
+# Create 'impl_1_post_place_power_opt_report_timing_summary_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_post_place_power_opt_report_timing_summary_0] "" ] } {
+  create_report_config -report_name impl_1_post_place_power_opt_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps post_place_power_opt_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_post_place_power_opt_report_timing_summary_0]
+if { $obj != "" } {
+set_property -name "is_enabled" -value "0" -objects $obj
+set_property -name "options.max_paths" -value "10" -objects $obj
+set_property -name "options.report_unconstrained" -value "1" -objects $obj
+
+}
+# Create 'impl_1_phys_opt_report_timing_summary_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_phys_opt_report_timing_summary_0] "" ] } {
+  create_report_config -report_name impl_1_phys_opt_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps phys_opt_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_phys_opt_report_timing_summary_0]
+if { $obj != "" } {
+set_property -name "is_enabled" -value "0" -objects $obj
+set_property -name "options.max_paths" -value "10" -objects $obj
+set_property -name "options.report_unconstrained" -value "1" -objects $obj
+
+}
+# Create 'impl_1_route_report_drc_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_drc_0] "" ] } {
+  create_report_config -report_name impl_1_route_report_drc_0 -report_type report_drc:1.0 -steps route_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_drc_0]
+if { $obj != "" } {
+
+}
+# Create 'impl_1_route_report_methodology_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_methodology_0] "" ] } {
+  create_report_config -report_name impl_1_route_report_methodology_0 -report_type report_methodology:1.0 -steps route_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_methodology_0]
+if { $obj != "" } {
+
+}
+```
+
+</details>
+
+1. Создание и настройка отчетов (reports) для этапа имплементации (impl_1)
+   1. Отчет о повторном использовании при размещении (impl_1_place_report_incremental_reuse_1)
+      1. Проверка существования отчета
+         1. Проверяет наличие отчета через get_report_configs
+         2. Создает новый отчет create_report_config при отсутствии:
+            1. Тип отчета: report_incremental_reuse:1.0
+            2. Для этапа: place_design
+            3. В рамках запуска: impl_1
+      2. Настройка свойств отчета
+         1. Получает ссылку на отчет через get_report_configs
+         2. Отключает отчет: is_enabled = 0
+
+   2. Отчет временных характеристик при размещении (impl_1_place_report_timing_summary_0)
+      1. Проверка и создание отчета
+         1. Аналогичная проверка существования
+         2. Создание отчета типа report_timing_summary:1.0
+      2. Настройка свойств
+         1. Отключает отчет: is_enabled = 0
+         2. Устанавливает параметры:
+            1. Максимальное количество путей для анализа: 10
+            2. Включение отчета по несвязанным путям: 1 (включено)
+
+   3. Отчет временных характеристик после оптимизации мощности (impl_1_post_place_power_opt_report_timing_summary_0)
+      1. Проверка и создание
+         1. Для этапа post_place_power_opt_design
+      2. Настройка
+         1. Аналогичные параметры как в предыдущем отчете:
+            1. Отключен
+            2. Макс. путей: 10
+            3. Отчет по несвязанным путям
+
+   4. Отчет временных характеристик после физической оптимизации (impl_1_phys_opt_report_timing_summary_0)
+      1. Создание для этапа phys_opt_design
+      2. Настройка идентична предыдущим временным отчетам
+
+   5. Отчет проверки правил проектирования (DRC) при трассировке (impl_1_route_report_drc_0)
+      1. Создание отчета типа report_drc:1.0
+      2. Для этапа route_design
+      3. Без дополнительных настроек (используются параметры по умолчанию)
+
+   6. Отчет методологии при трассировке (impl_1_route_report_methodology_0)
+      1. Создание отчета типа report_methodology:1.0
+      2. Также для этапа route_design
+      3. Без модификации параметров
+
+#### Особенности конфигурации:
+* Все временные отчеты (timing summary) отключены на этапе настройки (is_enabled=0)
+* Для временных отчетов установлено ограничение на количество анализируемых путей (10)
+* Включен отчет по несвязанным временным путям (unconstrained)
+* Отчеты DRC и Methodology оставлены с настройками по умолчанию
