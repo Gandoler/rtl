@@ -1064,3 +1064,84 @@ move_dashboard_gadget -name {methodology_1} -row 2 -col 1
     Команда move_dashboard_gadget размещает гаджеты в сетке дашборда (строка/столбец).
 
 ## Так что оно делает?
+### Анализ TCL-скрипта для проекта Vivado
+
+#### 📌 Основное назначение
+Скрипт автоматически воссоздает проект Vivado `demoproject` для платы **Nexys A7-100T** (XC7A100TCSG324-1). Он:
+1. Настраивает проект с указанными параметрами
+2. Добавляет исходные файлы и ограничения
+3. Создает файлсеты для синтеза, симуляции и имплементации
+4. Генерирует отчеты и дашборды для анализа
+
+---
+
+#### ⚙️ Ключевые компоненты
+
+##### 1. **Параметры проекта**
+```tcl
+create_project ${_xil_proj_name_} ./${_xil_proj_name_} -part xc7a100tcsg324-1
+```
+- **Целевое устройство**: Xilinx Artix-7 `xc7a100tcsg324-1`
+- **Версия Vivado**: 2023.1
+- **Языки**: SystemVerilog (`.sv`), поддержка VHDL-2008
+- **Топ-модуль**: `demo_wrapper_nexys_a7`
+
+##### 2. **Исходные файлы**
+```tcl
+add_files -norecurse -fileset $obj [list \
+  "${origin_dir}/source_files/demo.sv" \
+  "${origin_dir}/source_files/demo_wrapper_nexys_a7.sv"
+]
+```
+- Основные модули: `demo.sv`, `demo_wrapper_nexys_a7.sv`
+- Тип файлов: SystemVerilog (`set_property -name "file_type" -value "SystemVerilog"`)
+
+##### 3. **Ограничения (Constraints)**
+```tcl
+add_files -norecurse -fileset $obj [list \
+  "${origin_dir}/source_files/Nexys-A7-100T-Master.xdc"
+]
+```
+- Файл физических ограничений для платы Nexys A7-100T
+- Тип: XDC (Xilinx Design Constraints)
+
+##### 4. **Тестбенч для симуляции**
+```tcl
+add_files -norecurse -fileset $obj [list \
+  "${origin_dir}/source_files/tb_demo.sv"
+]
+```
+- Тестбенч `tb_demo.sv` для верификации дизайна
+
+##### 5. **Запуски (Runs)**
+- **Синтез**: 
+  ```tcl
+  create_run -name synth_1 -flow {Vivado Synthesis 2023} -strategy "Vivado Synthesis Defaults"
+  ```
+- **Имплементация**: 
+  ```tcl
+  create_run -name impl_1 -flow {Vivado Implementation 2023} -strategy "Vivado Implementation Defaults"
+  ```
+
+##### 6. **Отчеты**
+Скрипт генерирует 20+ отчетов, включая:
+- Utilization (использование ресурсов)
+- Timing (временной анализ)
+- DRC (Design Rule Check)
+- Power (анализ мощности)
+- Clock Utilization (использование тактовых доменов)
+
+##### 7. **Дашборд-гаджеты**
+```tcl
+create_dashboard_gadget -name {utilization_1} -type utilization
+create_dashboard_gadget -name {timing_1} -type timing
+...
+```
+Виджеты для визуализации:
+- Utilization (2 вида)
+- Timing Analysis
+- Power Consumption
+- DRC Checks
+- Methodology Verification
+
+---
