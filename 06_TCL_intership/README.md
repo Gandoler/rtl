@@ -1,5 +1,9 @@
 #  Введение в TCL
 
+## Самый полезные в мире ссылки
+ [введение в TCL](https://github.com/MPSU/FPGA_pract/tree/main/Labs/01.%20Tcl)
+ [TCL x Vivado. AMD  - топ](https://docs.amd.com/r/en-US/ug835-vivado-tcl-commands/Introduction)
+
 ## Запуск создания TCL скрипта
 
 ```TCL
