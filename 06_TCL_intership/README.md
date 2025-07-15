@@ -10,7 +10,7 @@ vivado -mode=batch -nojournal -nolog -source C:\Users\glkru\intership\Internship
 
 ## разбор сгенерированного скрипта
 
-
+** абсолютно не понимая что значит миллион этих параметров, просто для общего понимания процесса **
 
 ###  процедура checkRequiredFiles (38-72)
 
@@ -731,7 +731,7 @@ if { $obj != "" } {
 </details>
 
 1. Создание и настройка отчетов (reports) для этапа имплементации (impl_1)
-   1. Отчет о повторном использовании при размещении (impl_1_place_report_incremental_reuse_1)
+   1. Отчет о повторном использовании при размещении (impl_1_place_report_incremental_reuse_1) (364 - 371)
       1. Проверка существования отчета
          1. Проверяет наличие отчета через get_report_configs
          2. Создает новый отчет create_report_config при отсутствии:
@@ -742,7 +742,7 @@ if { $obj != "" } {
          1. Получает ссылку на отчет через get_report_configs
          2. Отключает отчет: is_enabled = 0
 
-   2. Отчет временных характеристик при размещении (impl_1_place_report_timing_summary_0)
+   2. Отчет временных характеристик при размещении (impl_1_place_report_timing_summary_0) (373 - 382)
       1. Проверка и создание отчета
          1. Аналогичная проверка существования
          2. Создание отчета типа report_timing_summary:1.0
@@ -752,7 +752,7 @@ if { $obj != "" } {
             1. Максимальное количество путей для анализа: 10
             2. Включение отчета по несвязанным путям: 1 (включено)
 
-   3. Отчет временных характеристик после оптимизации мощности (impl_1_post_place_power_opt_report_timing_summary_0)
+   3. Отчет временных характеристик после оптимизации мощности (impl_1_post_place_power_opt_report_timing_summary_0) (384 - 393)
       1. Проверка и создание
          1. Для этапа post_place_power_opt_design
       2. Настройка
@@ -761,16 +761,16 @@ if { $obj != "" } {
             2. Макс. путей: 10
             3. Отчет по несвязанным путям
 
-   4. Отчет временных характеристик после физической оптимизации (impl_1_phys_opt_report_timing_summary_0)
+   4. Отчет временных характеристик после физической оптимизации (impl_1_phys_opt_report_timing_summary_0) (395 - 404)
       1. Создание для этапа phys_opt_design
       2. Настройка идентична предыдущим временным отчетам
 
-   5. Отчет проверки правил проектирования (DRC) при трассировке (impl_1_route_report_drc_0)
+   5. Отчет проверки правил проектирования (DRC) при трассировке (impl_1_route_report_drc_0) (406 - 412)
       1. Создание отчета типа report_drc:1.0
       2. Для этапа route_design
       3. Без дополнительных настроек (используются параметры по умолчанию)
 
-   6. Отчет методологии при трассировке (impl_1_route_report_methodology_0)
+   6. Отчет методологии при трассировке (impl_1_route_report_methodology_0) (414 - 420)
       1. Создание отчета типа report_methodology:1.0
       2. Также для этапа route_design
       3. Без модификации параметров
@@ -780,3 +780,92 @@ if { $obj != "" } {
 * Для временных отчетов установлено ограничение на количество анализируемых путей (10)
 * Включен отчет по несвязанным временным путям (unconstrained)
 * Отчеты DRC и Methodology оставлены с настройками по умолчанию
+
+
+###  основной код часть 6 (422 - 496)
+
+<details>
+  <summary>Посмотреть код</summary>
+
+  ```TCL
+# Create 'impl_1_route_report_power_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_power_0] "" ] } {
+  create_report_config -report_name impl_1_route_report_power_0 -report_type report_power:1.0 -steps route_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_power_0]
+if { $obj != "" } {
+
+}
+# Create 'impl_1_route_report_route_status_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_route_status_0] "" ] } {
+  create_report_config -report_name impl_1_route_report_route_status_0 -report_type report_route_status:1.0 -steps route_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_route_status_0]
+if { $obj != "" } {
+
+}
+# Create 'impl_1_route_report_timing_summary_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_timing_summary_0] "" ] } {
+  create_report_config -report_name impl_1_route_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps route_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_timing_summary_0]
+if { $obj != "" } {
+set_property -name "options.max_paths" -value "10" -objects $obj
+set_property -name "options.report_unconstrained" -value "1" -objects $obj
+
+}
+# Create 'impl_1_route_report_incremental_reuse_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_incremental_reuse_0] "" ] } {
+  create_report_config -report_name impl_1_route_report_incremental_reuse_0 -report_type report_incremental_reuse:1.0 -steps route_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_incremental_reuse_0]
+if { $obj != "" } {
+
+}
+# Create 'impl_1_route_report_clock_utilization_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_clock_utilization_0] "" ] } {
+  create_report_config -report_name impl_1_route_report_clock_utilization_0 -report_type report_clock_utilization:1.0 -steps route_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_clock_utilization_0]
+if { $obj != "" } {
+
+}
+# Create 'impl_1_route_report_bus_skew_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_bus_skew_0] "" ] } {
+  create_report_config -report_name impl_1_route_report_bus_skew_0 -report_type report_bus_skew:1.1 -steps route_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_route_report_bus_skew_0]
+if { $obj != "" } {
+set_property -name "options.warn_on_violation" -value "1" -objects $obj
+
+}
+# Create 'impl_1_post_route_phys_opt_report_timing_summary_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_post_route_phys_opt_report_timing_summary_0] "" ] } {
+  create_report_config -report_name impl_1_post_route_phys_opt_report_timing_summary_0 -report_type report_timing_summary:1.0 -steps post_route_phys_opt_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_post_route_phys_opt_report_timing_summary_0]
+if { $obj != "" } {
+set_property -name "options.max_paths" -value "10" -objects $obj
+set_property -name "options.report_unconstrained" -value "1" -objects $obj
+set_property -name "options.warn_on_violation" -value "1" -objects $obj
+
+}
+# Create 'impl_1_post_route_phys_opt_report_bus_skew_0' report (if not found)
+if { [ string equal [get_report_configs -of_objects [get_runs impl_1] impl_1_post_route_phys_opt_report_bus_skew_0] "" ] } {
+  create_report_config -report_name impl_1_post_route_phys_opt_report_bus_skew_0 -report_type report_bus_skew:1.1 -steps post_route_phys_opt_design -runs impl_1
+}
+set obj [get_report_configs -of_objects [get_runs impl_1] impl_1_post_route_phys_opt_report_bus_skew_0]
+if { $obj != "" } {
+set_property -name "options.warn_on_violation" -value "1" -objects $obj
+
+}
+set obj [get_runs impl_1]
+set_property -name "part" -value "xc7a100tcsg324-1" -objects $obj
+set_property -name "strategy" -value "Vivado Implementation Defaults" -objects $obj
+set_property -name "steps.write_bitstream.args.readback_file" -value "0" -objects $obj
+set_property -name "steps.write_bitstream.args.verbose" -value "0" -objects $obj
+
+  ```
+
+</details>
+
