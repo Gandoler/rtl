@@ -2,7 +2,7 @@
 
 ## SDC
 
-    ###  Конспект :
+###  Конспект :
 1. clk
     1. Start with Clock Period and Duty Cycle
         1. Clock period (a.k.a cycle-time )
@@ -38,13 +38,11 @@
             SDC-команда:
 
             ```tcl
-
             set_clock_latency -source <value> [get_clocks <clock_name>]
 
             ```
             Пример:
             ```tcl
-
             set_clock_latency -source 1.2 [get_clocks clk]
 
             ```
@@ -68,7 +66,6 @@
         3. -rise / -fall
 
                 ``` TCL
-
                 set_clock_latency 1.2 -rise [get_clocks CLK1]
                 set_clock_latency 0.9 -fall [get_clocks CLK1]
 
@@ -80,7 +77,6 @@
                 * Эти значения используются в анализе тайминга, чтобы определить реальное время, когда тактовый импульс доходит до регистра.
 
                 ```tcl
-
                 set_clock_latency 0.8 -source -early [get_clocks CLK1]
                 set_clock_latency 0.9 -source -late [get_clocks CLK1]
 
@@ -98,7 +94,6 @@
        3. интерклоковая неопределённость (inter-clock skew/jitter) — между разными тактовыми доменами
                 Команда: set_clock_uncertainty
             ```tcl
-
             set_clock_uncertainty -setup 0.65 [get_clocks CLK]
             set_clock_uncertainty -hold  0.45 [get_clocks CLK]
 
@@ -115,7 +110,6 @@
         Для моделирования делителей/умножителей частоты, синхронных с основным клоком:
 
         ```tcl
-
         create_generated_clock -source FF1/CP -divide_by 2 -name CLK-OUT [get_pins FF1/Q]
 
         ```
@@ -143,7 +137,6 @@
         Пример:
 
         ```tcl
-
         set_clock_transition 0.38 -rise [get_clocks CLK1]
         set_clock_transition 0.25 -fall [get_clocks CLK1]
 
@@ -176,7 +169,6 @@
     Порт led — это выход на физический светодиод на плате. Мы просто подаём на него значение какого-то сигнала, например:
 
     ```verilog
-
     assign led = reg_value;
 
     ```
