@@ -4,23 +4,33 @@
 
 ###  Конспект :
 1. clk
+    
     1. Start with Clock Period and Duty Cycle
+
         1. Clock period (a.k.a cycle-time )
-        2. Duty Cycle = ratio = pulse width high time / pulse width
-    low time
+        
+        2. Duty Cycle = ratio = pulse width high time / pulse width low time
+
     2. create_clock
+
        1. create_clock –name “PHI1” –period 10 –waveform {0.0 5.0} [get_ports clk]
+
             * Создаёт такт "PHI1" с периодом 10 нс
             * Форма: подъём на 0.0 нс, спад на 5.0 нс (50% duty cycle)
             * Источник - порт clk (вероятно, входной порт чипа)
-       2. create_clock -name "clk" -period 4 -waveform {2.0 4.0} {clkg1/Z clkg2/Z clkg3/Z}
+
+       2. create_clock -name "clk" -period 4 -waveform {2.0 4.0} {clkg1/Z clkg2/Z clkg3/Z
+
             * Создаёт тактовый сигнал с именем "clk" и периодом 4 нс
             * Форма сигнала (waveform): подъём на 2.0 нс, спад на 4.0 нс (т.е. duty cycle 50%)
             * Источники тактового сигнала - выходы (Z) трёх буферов clkg1, clkg2, clkg3
+
        3. create_clock –name "clk10" –period 10 –waveform {0.0 9.0} [get_pins U1/clkout]
+
             * Создаёт такт "clk10" с периодом 10 нс
             * Форма: подъём на 0.0 нс, спад на 9.0 нс (очень несимметричный, 90% duty cycle)
             * Источник - выходной пин clkout элемента U1
+
     3. `Clock Insertion Delay` (a.k.a. clock latency
       
         |Флаг	    |Что означает                                                   |
@@ -31,55 +41,78 @@
         |-late      |	Используется в setup анализе (поздний приход такта)         |
         |-rise      |	Применяется только к фронту (rising edge)                   |
         |-fall      |	Применяется только к спаду (falling edge)                   |
+        |-----------|---------------------------------------------------------------|
         
-        
-       1. `Source Latency` (Источник задержки)
+        1. `Source Latency` (Источник задержки)
             Это задержка от внешнего источника (например, порт clk или PLL) до входа в чип или до корня дерева тактовой сети внутри чипа.
             SDC-команда:
+
             ```tcl
             set_clock_latency -source <value> [get_clocks <clock_name>]
             ```
+            
             Пример:
+            
             ```tcl
             set_clock_latency -source 1.2 [get_clocks clk]
+            
             ```
+            
             Это значит, что сигнал clk доходит до начала clock tree за 1.2 нс.
-       2. `Network Latency` (Clock Network Delay / Clock Tree Delay)
+            
+        2. `Network Latency` (Clock Network Delay / Clock Tree Delay)
+       
             Это задержка от корня clock tree до регистра внутри чипа, то есть сколько времени нужно, чтобы сигнал прошёл по clock tree (буферы, маршруты и т.д.).
+            
             ```tcl
             set_clock_latency <value> [get_clocks <clock_name>]
             ```
+            
             Пример:
+            
             ```tcl
             set_clock_latency 0.8 [get_clocks clk]
+            
             ```
+            
             Значит, что от начала clock tree до регистра — 0.8 нс.
-        3. -rise / -fall
-                ``` TCL
-                set_clock_latency 1.2 -rise [get_clocks CLK1]
-                set_clock_latency 0.9 -fall [get_clocks CLK1]
-                ```
-                Устанавливает clock network latency (внутри кристалла):
-                * 1.2 нс до фронта сигнала (rising edge)
-                * 0.9 нс до спада сигнала (falling edge)
-                * Эти значения используются в анализе тайминга, чтобы определить реальное время, когда тактовый импульс доходит до регистра.
-                ```tcl
-                set_clock_latency 0.8 -source -early [get_clocks CLK1]
-                set_clock_latency 0.9 -source -late [get_clocks CLK1]
+            
+        3. `-rise / -fall`
+        
+            ``` TCL
+            set_clock_latency 1.2 -rise [get_clocks CLK1]
+            set_clock_latency 0.9 -fall [get_clocks CLK1]
+            
+            ```
+            
+            Устанавливает clock network latency (внутри кристалла):
+            
+            * 1.2 нс до фронта сигнала (rising edge)
+            * 0.9 нс до спада сигнала (falling edge)
+            * Эти значения используются в анализе тайминга, чтобы определить реальное время, когда тактовый импульс доходит до регистра.
+            
+            ```tcl
+            set_clock_latency 0.8 -source -early [get_clocks CLK1]
+            set_clock_latency 0.9 -source -late [get_clocks CLK1]
 
-                ```
-                Задаёт source latency — задержку от генератора сигнала (например, PLL) до начала clock tree.
+            ```
+            Задаёт source latency — задержку от генератора сигнала (например, PLL) до начала clock tree.
 
-                * -source: это именно source latency, а не задержка по clock tree.
-                * -early и -late:
-                * -early используется в hold анализе (самый ранний приход сигнала)
-                * -late используется в setup анализе (самый поздний приход сигнала)
+            * -source: это именно source latency, а не задержка по clock tree.
+            * -early и -late:
+            * -early используется в hold анализе (самый ранний приход сигнала)
+            * -late используется в setup анализе (самый поздний приход сигнала)
+                
         4. Задержки влияют на расчёт setup/hold таймингов. Они определяют, когда реально приходит такт на регистр, и как сравнивать это с сигналами данных.
+        
     4. Clock Uncertainty — это временной интервал, который учитывает
+    
        1. джиттер (jitter) — нестабильность генерации (например, у PLL)
        2. неидеальность распространения по clock tree — сигнал может прийти к разным флип-флопам в немного разное время
        3. интерклоковая неопределённость (inter-clock skew/jitter) — между разными тактовыми доменами
+               
                 Команда: set_clock_uncertainty
+                
             ```tcl
             set_clock_uncertainty -setup 0.65 [get_clocks CLK]
             set_clock_uncertainty -hold  0.45 [get_clocks CLK]
@@ -93,19 +126,24 @@
 
             * setup становится жёстче: данные должны прийти раньше.
             * hold становится тоже жёстче: данные не должны меняться слишком рано.
+            
     5. Создание производного клока: `create_generated_clock`
+    
         Для моделирования делителей/умножителей частоты, синхронных с основным клоком:
 
         ```tcl
         create_generated_clock -source FF1/CP -divide_by 2 -name CLK-OUT [get_pins FF1/Q]
 
         ```
+        
         Пояснение:
+        
         * -source FF1/CP: мастер-клок на входе CP регистра FF1
         * -divide_by 2: выходной клок будет в 2 раза медленнее
         * [get_pins FF1/Q]: создаётся на выходном пине Q регистра
 
         Пояснение параметров `create_generated_clock`
+        
         | Параметр	        |Описание                                                       |
         |-------------------|---------------------------------------------------------------|
         |-source	        |Указывает мастер-клок (пин, откуда берётся исходный клок)      |
@@ -115,12 +153,17 @@
         |-edges	            |Явно задаёт фронты мастер-клока, формирующие новый клок        |
         |-invert	        |Инвертирует фазу клока                                         |
         |-edge_shift	    |Смещает фронты                                                 |
+        |-------------------|---------------------------------------------------------------|
+        
     6. `set_clock_transition`
+    
        1. Эта команда задаёт скорость нарастания/спада фронтов клока (slew rate), то есть время перехода от 0 до 1 (и наоборот).
+       
             * Работает только для ideal clocks
             * Не влияет на propagated clocks — для них переходы считаются по цепям
             * Если не указать set_clock_transition, то инструмент сам придумает переход (не всегда точный)
             * Помогает избежать заниженной/завышенной оценки тайминга
+            
         Пример:
 
         ```tcl
@@ -128,7 +171,9 @@
         set_clock_transition 0.25 -fall [get_clocks CLK1]
 
         ```
+        
         * Означает:
+        
         * Время подъёма фронта (rise time) клока = 0.38 нс
         * Время спада фронта (fall time) клока = 0.25 нс
         * Применяется к клоку с именем CLK1
