@@ -10,19 +10,19 @@
     low time
     2. create_clock
        1. create_clock –name “PHI1” –period 10 –waveform {0.0 5.0} [get_ports clk]
-         * Создаёт такт "PHI1" с периодом 10 нс
-         * Форма: подъём на 0.0 нс, спад на 5.0 нс (50% duty cycle)
-         * Источник - порт clk (вероятно, входной порт чипа)
+            * Создаёт такт "PHI1" с периодом 10 нс
+            * Форма: подъём на 0.0 нс, спад на 5.0 нс (50% duty cycle)
+            * Источник - порт clk (вероятно, входной порт чипа)
        2. create_clock -name "clk" -period 4 -waveform {2.0 4.0} {clkg1/Z clkg2/Z clkg3/Z}
-        * Создаёт тактовый сигнал с именем "clk" и периодом 4 нс
-        * Форма сигнала (waveform): подъём на 2.0 нс, спад на 4.0 нс (т.е. duty cycle 50%)
-        * Источники тактового сигнала - выходы (Z) трёх буферов clkg1, clkg2, clkg3
+            * Создаёт тактовый сигнал с именем "clk" и периодом 4 нс
+            * Форма сигнала (waveform): подъём на 2.0 нс, спад на 4.0 нс (т.е. duty cycle 50%)
+            * Источники тактового сигнала - выходы (Z) трёх буферов clkg1, clkg2, clkg3
        3. create_clock –name "clk10" –period 10 –waveform {0.0 9.0} [get_pins U1/clkout]
-        * Создаёт такт "clk10" с периодом 10 нс
-        * Форма: подъём на 0.0 нс, спад на 9.0 нс (очень несимметричный, 90% duty cycle)
-        * Источник - выходной пин clkout элемента U1
-    3. `Clock Insertion Delay` (a.k.a. clock latency)
-
+            * Создаёт такт "clk10" с периодом 10 нс
+            * Форма: подъём на 0.0 нс, спад на 9.0 нс (очень несимметричный, 90% duty cycle)
+            * Источник - выходной пин clkout элемента U1
+    3. `Clock Insertion Delay` (a.k.a. clock latency
+      
         |Флаг	    |Что означает                                                   |
         |-----------|---------------------------------------------------------------|
         |-source    |	Это задержка от источника (PLL, порт) до начала clock tree  |
@@ -31,51 +31,38 @@
         |-late      |	Используется в setup анализе (поздний приход такта)         |
         |-rise      |	Применяется только к фронту (rising edge)                   |
         |-fall      |	Применяется только к спаду (falling edge)                   |
-
+        
+        
        1. `Source Latency` (Источник задержки)
             Это задержка от внешнего источника (например, порт clk или PLL) до входа в чип или до корня дерева тактовой сети внутри чипа.
-
             SDC-команда:
-
             ```tcl
             set_clock_latency -source <value> [get_clocks <clock_name>]
-
             ```
             Пример:
             ```tcl
             set_clock_latency -source 1.2 [get_clocks clk]
-
             ```
             Это значит, что сигнал clk доходит до начала clock tree за 1.2 нс.
        2. `Network Latency` (Clock Network Delay / Clock Tree Delay)
             Это задержка от корня clock tree до регистра внутри чипа, то есть сколько времени нужно, чтобы сигнал прошёл по clock tree (буферы, маршруты и т.д.).
-
             ```tcl
-
             set_clock_latency <value> [get_clocks <clock_name>]
-
             ```
             Пример:
-
             ```tcl
-
             set_clock_latency 0.8 [get_clocks clk]
             ```
-
             Значит, что от начала clock tree до регистра — 0.8 нс.
         3. -rise / -fall
-
                 ``` TCL
                 set_clock_latency 1.2 -rise [get_clocks CLK1]
                 set_clock_latency 0.9 -fall [get_clocks CLK1]
-
                 ```
                 Устанавливает clock network latency (внутри кристалла):
-
                 * 1.2 нс до фронта сигнала (rising edge)
                 * 0.9 нс до спада сигнала (falling edge)
                 * Эти значения используются в анализе тайминга, чтобы определить реальное время, когда тактовый импульс доходит до регистра.
-
                 ```tcl
                 set_clock_latency 0.8 -source -early [get_clocks CLK1]
                 set_clock_latency 0.9 -source -late [get_clocks CLK1]
