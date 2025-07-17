@@ -5,33 +5,32 @@
 ###  Конспект :
 1. clk
 
-    1. Start with Clock Period and Duty Cycle
+      1. Start with Clock Period and Duty Cycle
 
-        1. Clock period (a.k.a cycle-time )
+         1. Clock period (a.k.a cycle-time )
+         2. Duty Cycle = ratio = pulse width high time / pulse width low time
 
-        2. Duty Cycle = ratio = pulse width high time / pulse width low time
+      2. create_clock
 
-    2. create_clock
-
-       1. create_clock –name “PHI1” –period 10 –waveform {0.0 5.0} [get_ports clk]
+          1. create_clock –name “PHI1” –period 10 –waveform {0.0 5.0} [get_ports clk]
 
             * Создаёт такт "PHI1" с периодом 10 нс
             * Форма: подъём на 0.0 нс, спад на 5.0 нс (50% duty cycle)
             * Источник - порт clk (вероятно, входной порт чипа)
 
-       2. create_clock -name "clk" -period 4 -waveform {2.0 4.0} {clkg1/Z clkg2/Z clkg3/Z
+          2. create_clock -name "clk" -period 4 -waveform {2.0 4.0} {clkg1/Z clkg2/Z clkg3/Z
 
             * Создаёт тактовый сигнал с именем "clk" и периодом 4 нс
             * Форма сигнала (waveform): подъём на 2.0 нс, спад на 4.0 нс (т.е. duty cycle 50%)
             * Источники тактового сигнала - выходы (Z) трёх буферов clkg1, clkg2, clkg3
 
-       3. create_clock –name "clk10" –period 10 –waveform {0.0 9.0} [get_pins U1/clkout]
+          3. create_clock –name "clk10" –period 10 –waveform {0.0 9.0} [get_pins U1/clkout]
 
             * Создаёт такт "clk10" с периодом 10 нс
             * Форма: подъём на 0.0 нс, спад на 9.0 нс (очень несимметричный, 90% duty cycle)
             * Источник - выходной пин clkout элемента U1
 
-    3. `Clock Insertion Delay` (a.k.a. clock latency
+       3. `Clock Insertion Delay` (a.k.a. clock latency
 
         |Флаг	    |Что означает                                                   |
         |-----------|---------------------------------------------------------------|
@@ -43,7 +42,7 @@
         |-fall      |	Применяется только к спаду (falling edge)                   |
         |-----------|---------------------------------------------------------------|
 
-        1. `Source Latency` (Источник задержки)
+        4. `Source Latency` (Источник задержки)
             Это задержка от внешнего источника (например, порт clk или PLL) до входа в чип или до корня дерева тактовой сети внутри чипа.
             SDC-команда:
 
@@ -60,7 +59,7 @@
 
             Это значит, что сигнал clk доходит до начала clock tree за 1.2 нс.
 
-        2. `Network Latency` (Clock Network Delay / Clock Tree Delay)
+        5. `Network Latency` (Clock Network Delay / Clock Tree Delay)
 
             Это задержка от корня clock tree до регистра внутри чипа, то есть сколько времени нужно, чтобы сигнал прошёл по clock tree (буферы, маршруты и т.д.).
 
@@ -77,7 +76,7 @@
 
             Значит, что от начала clock tree до регистра — 0.8 нс.
 
-        3. `-rise / -fall`
+        6. `-rise / -fall`
 
             ``` TCL
             set_clock_latency 1.2 -rise [get_clocks CLK1]
@@ -103,9 +102,9 @@
             * -early используется в hold анализе (самый ранний приход сигнала)
             * -late используется в setup анализе (самый поздний приход сигнала)
 
-        4. Задержки влияют на расчёт setup/hold таймингов. Они определяют, когда реально приходит такт на регистр, и как сравнивать это с сигналами данных.
+        7. Задержки влияют на расчёт setup/hold таймингов. Они определяют, когда реально приходит такт на регистр, и как сравнивать это с сигналами данных.
 
-    4. Clock Uncertainty — это временной интервал, который учитывает
+    1. Clock Uncertainty — это временной интервал, который учитывает
        1. джиттер (jitter) — нестабильность генерации (например, у PLL)
        2. неидеальность распространения по clock tree — сигнал может прийти к разным флип-флопам в немного разное время
        3. интерклоковая неопределённость (inter-clock skew/jitter) — между разными тактовыми доменами
@@ -126,7 +125,7 @@
             * setup становится жёстче: данные должны прийти раньше.
             * hold становится тоже жёстче: данные не должны меняться слишком рано.
 
-    5. Создание производного клока: `create_generated_clock`
+    2. Создание производного клока: `create_generated_clock`
 
         Для моделирования делителей/умножителей частоты, синхронных с основным клоком:
 
@@ -154,7 +153,7 @@
         |-edge_shift	    |Смещает фронты                                                 |
         |-------------------|---------------------------------------------------------------|
 
-    6. `set_clock_transition`
+    3. `set_clock_transition`
        1. Эта команда задаёт скорость нарастания/спада фронтов клока (slew rate), то есть время перехода от 0 до 1 (и наоборот).
 
             * Работает только для ideal clocks
