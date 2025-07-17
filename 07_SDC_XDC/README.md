@@ -6,31 +6,25 @@
 1. clk
 
       1. Start with Clock Period and Duty Cycle
-
          1. Clock period (a.k.a cycle-time )
          2. Duty Cycle = ratio = pulse width high time / pulse width low time
 
       2. create_clock
-
           1. create_clock –name “PHI1” –period 10 –waveform {0.0 5.0} [get_ports clk]
 
-            * Создаёт такт "PHI1" с периодом 10 нс
-            * Форма: подъём на 0.0 нс, спад на 5.0 нс (50% duty cycle)
-            * Источник - порт clk (вероятно, входной порт чипа)
-
-          2. create_clock -name "clk" -period 4 -waveform {2.0 4.0} {clkg1/Z clkg2/Z clkg3/Z
-
-            * Создаёт тактовый сигнал с именем "clk" и периодом 4 нс
-            * Форма сигнала (waveform): подъём на 2.0 нс, спад на 4.0 нс (т.е. duty cycle 50%)
-            * Источники тактового сигнала - выходы (Z) трёх буферов clkg1, clkg2, clkg3
-
+                * Создаёт такт "PHI1" с периодом 10 нс
+                * Форма: подъём на 0.0 нс, спад на 5.0 нс (50% duty cycle)
+                * Источник - порт clk (вероятно, входной порт чипа)
+          2. create_clock -name "clk" -period 4 -waveform {2.0 4.0} {clkg1/Z clkg2/Z clkg3/Z}
+                * Создаёт тактовый сигнал с именем "clk" и периодом 4 нс
+                * Форма сигнала (waveform): подъём на 2.0 нс, спад на 4.0 нс (т.е. duty cycle 50%)
+                * Источники тактового сигнала - выходы (Z) трёх буферов clkg1, clkg2, clkg3
           3. create_clock –name "clk10" –period 10 –waveform {0.0 9.0} [get_pins U1/clkout]
+                * Создаёт такт "clk10" с периодом 10 нс
+                * Форма: подъём на 0.0 нс, спад на 9.0 нс (очень несимметричный, 90% duty cycle)
+                * Источник - выходной пин clkout элемента U1
 
-            * Создаёт такт "clk10" с периодом 10 нс
-            * Форма: подъём на 0.0 нс, спад на 9.0 нс (очень несимметричный, 90% duty cycle)
-            * Источник - выходной пин clkout элемента U1
-
-       3. `Clock Insertion Delay` (a.k.a. clock latency
+       3. `Clock Insertion Delay` (a.k.a. clock latency)
 
         |Флаг	    |Что означает                                                   |
         |-----------|---------------------------------------------------------------|
