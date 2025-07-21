@@ -20,7 +20,7 @@ module division#(
          for(j = 0; j < width; j++) begin
 
            if((i == width-1) && (j == 0)) begin// угловой случай
-             division_i_j(
+             div_block div_block_i_j(
                .R(A[width-1]),
                .B(!B[0]),
                .C_in('b1),
@@ -33,8 +33,8 @@ module division#(
              );
            end else if (i == (width - 1) && (j != 0)) begin// правая граница, исключая угловой случай
 
-             division_i_j(
-               .R(A[width -1 - J]),
+             div_block div_block_i_j(
+               .R(A[width -1 - j]),
                .B(B_out[i][j-1]),
                .C_in('b1),
                .D(),
@@ -46,7 +46,7 @@ module division#(
              );
            end else if ((j == 0) && (i != (width - 1))) begin // верхняя граница, исключая угловой случай
 
-             division_i_j(
+             div_block div_block_i_j(
                .R('b0),
                .B(!B[(width - 1) - i]),
                .C_in(C_out[i+1][j]),
@@ -59,7 +59,7 @@ module division#(
              );
            end else if ((j > 0 ) && (i < (width - 1))) begin //  серединка
 
-             division_i_j(
+             div_block div_block_i_j(
                .R(R_out[i+1][j]),
                .B(B_out[i][j-1]),
                .C_in(C_out[i+1][j]),
@@ -76,10 +76,10 @@ module division#(
    endgenerate
 
   always_comb begin
-    for (int i = 0; i < (width - 1); i++)begin
+    for (int i = 0; i < width; i++)begin
       Q[i] = !(D[(width - 1) -i]);
     end
-    for (int i = 0; i < (width - 1); i++)begin
+    for (int i = 0; i < width; i++)begin
       R[i] = R_out[(width - 1) - i][width-1];
     end
   end
