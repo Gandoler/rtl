@@ -2,7 +2,7 @@ module div_block(
   input  logic R,
   input  logic B,
   input  logic C_in,
-  input  logic N;
+  input  logic N,
 
   output logic C_out,
   output logic D,
