@@ -24,7 +24,6 @@ fulladder adder(
 
 always_comb begin
   D     = adder_sum;
-  N     = adder_sum;
   B_out = B;
   R_out = N? R : adder_sum;
 end
