@@ -1,7 +1,7 @@
 module fulladder(
-    input logic a_i,
-    input logic b_i,
-    input logic carry_i,
+    input  logic a_i,
+    input  logic b_i,
+    input  logic carry_i,
     output logic sum_o,
     output logic carry_o
 );
