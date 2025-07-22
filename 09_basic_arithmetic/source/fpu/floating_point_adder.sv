@@ -23,10 +23,22 @@ module floating_point_adder (
 );
 
   logic           en;
+  logic           state;
   float_point_num pipelined_input1;
   float_point_num pipelined_input2;
   float_point_num pipelined_num1 [0 : 6-1];
   float_point_num pipelined_num2 [0 : 6-1];
+
+  shift_reg_base shift_reg_base#(
+  parameter STAGES = 6, WIDTH=1;
+)(
+  .clk(clk),
+  .rst(rst),
+  .en(en),
+  .in_data(state),
+
+  .out_data(res_vld)
+);
 
   shift_reg_for_struct shift_reg_for_struct_1#(
   STAGES = 6;
@@ -58,27 +70,30 @@ shift_reg_for_struct shift_reg_for_struct_2#(
       pipelined_input2.sign <= 'b0;
       pipelined_input2.exp  <= 'b0;
       pipelined_input2.mant <= 'b0;
+      state                 <= 'b0;
     end else if(arg_vld) begin
-      pipelined_input1.sign = a[31];
-      pipelined_input1.exp = a[30:23];
-      pipelined_input1.mant = a[22:0];
+      pipelined_input1.sign <= a[31];
+      pipelined_input1.exp  <= a[30:23];
+      pipelined_input1.mant <= {1, b[22:0]};
 
-      pipelined_input2.sign = b[31];
-      pipelined_input2.exp = b[30:23];
-      pipelined_input2.mant = b[22:0];
+      pipelined_input2.sign <= b[31];
+      pipelined_input2.exp  <= b[30:23];
+      pipelined_input2.mant <= {1, b[22:0]};
+      if(((&pipelined_input2.exp) == 1) || ((&pipelined_input1.exp) == 1)) // if mant 1 or 2 == 255, --> badstate
+        state <= 0;
+      else
+        state <= 1;
     end
   end
 
   always_ff @( posedge clk ) begin
     if(rst)
       en <= 'b0;
-    else if(!((&pipelined_input1.exp) == 'b1))
+    else if(arg_vld)
       en <= 'b1;
   end
 
-  always_comb begin
-
-    if()
+  always_ff @( posedge clk ) begin // exp compare
 
   end
 
