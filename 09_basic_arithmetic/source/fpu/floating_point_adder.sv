@@ -1,15 +1,12 @@
+`include "struct_types.sv"
+import float_struct::*;
+
  typedef enum logic[1:0]{
     OK  = 2'b00,
     NAN = 2'b01,
     INF = 2'b10,
     NUL = 2'b11
   } states;
-
-  typedef struct {
-    logic        sign;
-    logic [7:0]  exp;
-    logic [23:0] mant;
-  } float_point_num;
 
 
 module floating_point_adder (
