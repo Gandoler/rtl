@@ -47,14 +47,16 @@ module floating_point_adder #(
     if (rst) begin
        for(int i=0; i < STAGES; i++) begin
           pipelined_num1[i].sign <='b0;
-          pipelined_num1[i].exp <='b0;
+          pipelined_num1[i].exp  <='b0;
           pipelined_num1[i].mant <='b0;
 
           pipelined_num2[i].sign <='b0;
-          pipelined_num2[i].exp <='b0;
+          pipelined_num2[i].exp  <='b0;
           pipelined_num2[i].mant <='b0;
        end
+
       state                      <= 'b0;
+
     end else if(arg_vld) begin
       pipelined_num1[0].sign <= a[31];
       pipelined_num1[0].exp  <= a[30:23];
@@ -78,8 +80,21 @@ module floating_point_adder #(
   end
 
   always_ff @( posedge clk ) begin // exp compare
-
+    if(rst)
+      exp_dif <=0;
+    else begin // For optimization, avoid using subtraction after this calc
+      exp_dif <= (pipelined_num1[0].exp > pipelined_num2[0].exp) ? (pipelined_num1[0].exp - pipelined_num2[0].exp) : (pipelined_num2[0].exp - pipelined_num1[0].exp);
+    end
   end
+
+  always_ff @( posedge clk ) begin // exp shift
+    if(pipelined_num1[0].exp > pipelined_num2[0].exp)
+      pipelined_num2[0].exp >> exp_dif
+    else
+      pipelined_num1[0].exp >> exp_dif
+  end
+
+
 
 
 
