@@ -41,31 +41,45 @@ module floating_point_adder #(
   .out_data(res_vld)
 );
 
+  shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_1
+
+  (
+  .clk(clk),
+  .rst(rst),
+  .en(en),
+  .in_data(pipelined_input1),
+  .out_data(pipelined_num1)
+);
+
+shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
+  (
+  .clk(clk),
+  .rst(rst),
+  .en(en),
+  .in_data(pipelined_input1),
+  .out_data(pipelined_num2)
+);
 
 
    always_ff @( posedge clk ) begin // fetch
     if (rst) begin
-       for(int i=0; i < STAGES; i++) begin
-          pipelined_num1[i].sign <='b0;
-          pipelined_num1[i].exp  <='b0;
-          pipelined_num1[i].mant <='b0;
+      ppipelined_input1.sign <= 'b0;
+      pipelined_input1.exp  <= 'b0;
+      pipelined_input1.mant <= 'b0
 
-          pipelined_num2[i].sign <='b0;
-          pipelined_num2[i].exp  <='b0;
-          pipelined_num2[i].mant <='b0;
-       end
-
-      state                      <= 'b0;
-
+      pipelined_input2.sign <= 'b0;
+      pipelined_input2.exp  <= 'b0;
+      pipelined_input2.mant <= 'b0;
+      state                 <= 'b0;
     end else if(arg_vld) begin
-      pipelined_num1[0].sign <= a[31];
-      pipelined_num1[0].exp  <= a[30:23];
-      pipelined_num1[0].mant <= {1'b1, b[22:0]};
+      pipelined_input1.sign <= a[31];
+      pipelined_input1.exp  <= a[30:23];
+      pipelined_input1.mant <= {1, b[22:0]}
 
-      pipelined_num2[0].sign <= b[31];
-      pipelined_num2[0].exp  <= b[30:23];
-      pipelined_num2[0].mant <= {1'b1, b[22:0]};
-      if(((&pipelined_num2[0].exp) == 1) || ((&pipelined_num2[0].exp) == 1)) // if 1 or 2 mant  == 255, --> badstate
+      pipelined_input2.sign <= b[31];
+      pipelined_input2.exp  <= b[30:23];
+      pipelined_input2.mant <= {1, b[22:0]};
+      if(((&pipelined_input2.exp) == 1) || ((&pipelined_input1.exp) == 1))  // if     1 or 2 mant  == 255, --> badstate
         state <= 0;
       else
         state <= 1;
@@ -84,15 +98,15 @@ module floating_point_adder #(
     if(rst)
       exp_dif <=0;
     else begin // For optimization, avoid using subtraction after this calc
-      exp_dif <= (pipelined_num1[0].exp > pipelined_num2[0].exp) ? (pipelined_num1[0].exp - pipelined_num2[0].exp) : (pipelined_num2[0].exp - pipelined_num1[0].exp);
+      exp_dif <= (pipelined_num1[1].exp > pipelined_num2[1].exp) ? (pipelined_num1[1].exp - pipelined_num2[1].exp) : (pipelined_num2[1].exp - pipelined_num1[1].exp);
     end
   end
 
   always_ff @( posedge clk ) begin // exp shift
-    if(pipelined_num1[0].exp > pipelined_num2[0].exp)
-      pipelined_num2[0].exp >> exp_dif
+    if(pipelined_num1[2].exp > pipelined_num2[2].exp)
+      pipelined_num2[2].exp <= pipelined_num2[2].exp >> exp_dif;
     else
-      pipelined_num1[0].exp >> exp_dif
+      pipelined_num1[2].exp <= pipelined_num1[2].exp >> exp_dif;
   end
 
 
