@@ -10,7 +10,7 @@ module shift_reg_for_struct#(
   input  logic           en,
   input  float_point_num in_data,
 
-  output float_point_num out_data
+  output float_point_num out_data [0 : STAGES-1]
 );
 
 
