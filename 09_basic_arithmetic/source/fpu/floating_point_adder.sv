@@ -9,7 +9,9 @@ import float_struct::*;
   } states;
 
 
-module floating_point_adder (
+module floating_point_adder #(
+  parameter STAGES = 6, WIDTH=1;
+)(
     input               clk,
     input               rst,
 
@@ -29,7 +31,7 @@ module floating_point_adder (
   float_point_num pipelined_num2 [0 : 6-1];
 
   shift_reg_base shift_reg_base#(
-  parameter STAGES = 6, WIDTH=1;
+  parameter STAGES = STAGES, WIDTH=WIDTH;
 )(
   .clk(clk),
   .rst(rst),
@@ -61,7 +63,7 @@ module floating_point_adder (
       pipelined_num2[0].sign <= b[31];
       pipelined_num2[0].exp  <= b[30:23];
       pipelined_num2[0].mant <= {1, b[22:0]};
-      if(((&pipelined_num2.exp) == 1) || ((&pipelined_num2.exp) == 1)) // if mant 1 or 2 == 255, --> badstate
+      if(((&pipelined_num2[0].exp) == 1) || ((&pipelined_num2[0].exp) == 1)) // if mant 1 or 2 == 255, --> badstate
         state <= 0;
       else
         state <= 1;
