@@ -114,21 +114,30 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
     end
   end
 
+
   always_ff @( posedge clk ) begin // exp shift
     if(larger_mant)
-      pipelined_num2[2].exp <= pipelined_num2[2].exp >> exp_dif;
+      pipelined_num2[2].mant <= pipelined_num2[2].mant >> exp_dif;
     else
-      pipelined_num1[2].exp <= pipelined_num1[2].exp >> exp_dif;
+      pipelined_num1[2].mant <= pipelined_num1[2].mant >> exp_dif;
   end
 
   logic [24:0] mant_sum ;
 
 
-  always_ff @( posedge clk ) begin // mant + ot -
+  always_ff @( posedge clk ) begin // mant + or -
     if(rst)
       mant_sum <= 'b0;
     else begin
+      if(pipelined_num1[3].sign == pipelined_num2[3].sign) begin
+        mant_sum <= {1'b0, pipelined_num1[3].mant} + {1'b0, pipelined_num2[3].mant}
+      end else begin
+        if(pipelined_num1[3].mant > pipelined_num2[3].mant) begin
+         mant_sum <= {1'b0, pipelined_num1[3].mant} - {1'b0, pipelined_num2[3].mant}
+        end
 
+
+      end
     end
   end
 
