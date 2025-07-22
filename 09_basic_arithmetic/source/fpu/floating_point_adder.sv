@@ -24,8 +24,7 @@ module floating_point_adder (
 
   logic           en;
   logic           state;
-  float_point_num pipelined_input1;
-  float_point_num pipelined_input2;
+
   float_point_num pipelined_num1 [0 : 6-1];
   float_point_num pipelined_num2 [0 : 6-1];
 
@@ -40,46 +39,29 @@ module floating_point_adder (
   .out_data(res_vld)
 );
 
-  shift_reg_for_struct shift_reg_for_struct_1#(
-  STAGES = 6;
-)(
-  .clk(clk),
-  .rst(rst),
-  .en(en),
-  .in_data(pipelined_input1),
-  .out_data(pipelined_num1)
-);
-
-shift_reg_for_struct shift_reg_for_struct_2#(
-  STAGES = 6;
-)(
-  .clk(clk),
-  .rst(rst),
-  .en(en),
-  .in_data(pipelined_input1),
-  .out_data(pipelined_num2)
-);
 
 
    always_ff @( posedge clk ) begin // fetch
     if (rst) begin
-      pipelined_input1.sign <= 'b0;
-      pipelined_input1.exp  <= 'b0;
-      pipelined_input1.mant <= 'b0;
+       for(int i=0; i < STAGES; i++) begin
+          pipelined_num1[i].sign <='b0;
+          pipelined_num1[i].exp <='b0;
+          pipelined_num1[i].mant <='b0;
 
-      pipelined_input2.sign <= 'b0;
-      pipelined_input2.exp  <= 'b0;
-      pipelined_input2.mant <= 'b0;
-      state                 <= 'b0;
+          pipelined_num2[i].sign <='b0;
+          pipelined_num2[i].exp <='b0;
+          pipelined_num2[i].mant <='b0;
+       end
+      state                      <= 'b0;
     end else if(arg_vld) begin
-      pipelined_input1.sign <= a[31];
-      pipelined_input1.exp  <= a[30:23];
-      pipelined_input1.mant <= {1, b[22:0]};
+      pipelined_num1[0].sign <= a[31];
+      pipelined_num1[0].exp  <= a[30:23];
+      pipelined_num1[0].mant <= {1, b[22:0]};
 
-      pipelined_input2.sign <= b[31];
-      pipelined_input2.exp  <= b[30:23];
-      pipelined_input2.mant <= {1, b[22:0]};
-      if(((&pipelined_input2.exp) == 1) || ((&pipelined_input1.exp) == 1)) // if mant 1 or 2 == 255, --> badstate
+      pipelined_num2[0].sign <= b[31];
+      pipelined_num2[0].exp  <= b[30:23];
+      pipelined_num2[0].mant <= {1, b[22:0]};
+      if(((&pipelined_num2.exp) == 1) || ((&pipelined_num2.exp) == 1)) // if mant 1 or 2 == 255, --> badstate
         state <= 0;
       else
         state <= 1;
