@@ -64,27 +64,35 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
    always_ff @( posedge clk ) begin // fetch
     if (rst) begin
       ppipelined_input1.sign <= 'b0;
-      pipelined_input1.exp  <= 'b0;
-      pipelined_input1.mant <= 'b0
+      pipelined_input1.exp   <= 'b0;
+      pipelined_input1.mant  <= 'b0;
 
-      pipelined_input2.sign <= 'b0;
-      pipelined_input2.exp  <= 'b0;
-      pipelined_input2.mant <= 'b0;
-      state                 <= 'b0;
+      pipelined_input2.sign  <= 'b0;
+      pipelined_input2.exp   <= 'b0;
+      pipelined_input2.mant  <= 'b0;
     end else if(arg_vld) begin
-      pipelined_input1.sign <= a[31];
-      pipelined_input1.exp  <= a[30:23];
-      pipelined_input1.mant <= {1, b[22:0]}
+      pipelined_input1.sign  <= a[31];
+      pipelined_input1.exp   <= a[30:23];
+      pipelined_input1.mant  <= {1'b1, b[22:0]};
 
-      pipelined_input2.sign <= b[31];
-      pipelined_input2.exp  <= b[30:23];
-      pipelined_input2.mant <= {1, b[22:0]};
-      if(((&pipelined_input2.exp) == 1) || ((&pipelined_input1.exp) == 1))  // if     1 or 2 mant  == 255, --> badstate
-        state <= 0;
-      else
-        state <= 1;
+      pipelined_input2.sign  <= b[31];
+      pipelined_input2.exp   <= b[30:23];
+      pipelined_input2.mant  <= {1'b1, b[22:0]};
     end
   end
+
+  always_ff @( posedge clk ) begin // fetch
+    if (rst) begin
+      state                  <= 1'b0;
+    end else begin
+      if(((&a[30:23]) == 1) || ((&b[30:23]) == 1))  // if     1 or 2 mant  == 255, --> badstate
+        state                <= 1'b0;
+      else
+        state                <= 1'b1;
+    end
+  end 
+        
+        
 
   always_ff @( posedge clk ) begin
     if(rst)
