@@ -10,7 +10,7 @@ import float_struct::*;
 
 
 module floating_point_adder #(
-  parameter STAGES = 6, WIDTH=1;
+  parameter STAGES = 6, WIDTH=1
 )(
     input               clk,
     input               rst,
@@ -24,15 +24,15 @@ module floating_point_adder #(
     output logic        res_vld
 );
 
-  logic           en;
-  logic           state;
+  logic                  en;
+  logic                  state;
+  logic signed  [7:0]    exp_dif;
 
   float_point_num pipelined_num1 [0 : 6-1];
   float_point_num pipelined_num2 [0 : 6-1];
 
-  shift_reg_base shift_reg_base#(
-  parameter STAGES = STAGES, WIDTH=WIDTH;
-)(
+  shift_reg_base #(.STAGES(STAGES), .WIDTH(WIDTH)) shift_reg_base
+  (
   .clk(clk),
   .rst(rst),
   .en(en),
@@ -58,12 +58,12 @@ module floating_point_adder #(
     end else if(arg_vld) begin
       pipelined_num1[0].sign <= a[31];
       pipelined_num1[0].exp  <= a[30:23];
-      pipelined_num1[0].mant <= {1, b[22:0]};
+      pipelined_num1[0].mant <= {1'b1, b[22:0]};
 
       pipelined_num2[0].sign <= b[31];
       pipelined_num2[0].exp  <= b[30:23];
-      pipelined_num2[0].mant <= {1, b[22:0]};
-      if(((&pipelined_num2[0].exp) == 1) || ((&pipelined_num2[0].exp) == 1)) // if mant 1 or 2 == 255, --> badstate
+      pipelined_num2[0].mant <= {1'b1, b[22:0]};
+      if(((&pipelined_num2[0].exp) == 1) || ((&pipelined_num2[0].exp) == 1)) // if 1 or 2 mant  == 255, --> badstate
         state <= 0;
       else
         state <= 1;
@@ -77,8 +77,20 @@ module floating_point_adder #(
       en <= 'b1;
   end
 
-  always_ff @( posedge clk ) begin // exp compare
 
+  always_ff @( posedge clk ) begin // exp compare
+    if(rst)
+      exp_dif <=0;
+    else begin // For optimization, avoid using subtraction after this calc
+      exp_dif <= (pipelined_num1[0].exp > pipelined_num2[0].exp) ? (pipelined_num1[0].exp - pipelined_num2[0].exp) : (pipelined_num2[0].exp - pipelined_num1[0].exp);
+    end
+  end
+
+  always_ff @( posedge clk ) begin // exp shift
+    if(pipelined_num1[0].exp > pipelined_num2[0].exp)
+      pipelined_num2[0].exp >> exp_dif
+    else
+      pipelined_num1[0].exp >> exp_dif
   end
 
 
