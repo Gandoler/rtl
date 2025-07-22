@@ -26,7 +26,6 @@ module floating_point_adder #(
 
   logic                  en;
   logic                  state;
-  logic signed  [7:0]    exp_dif;
 
   float_point_num pipelined_num1 [0 : 6-1];
   float_point_num pipelined_num2 [0 : 6-1];
@@ -90,9 +89,9 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
       else
         state                <= 1'b1;
     end
-  end 
-        
-        
+  end
+
+
 
   always_ff @( posedge clk ) begin
     if(rst)
@@ -102,21 +101,36 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
   end
 
 
+  logic signed  [7:0]    exp_dif;
+  logic                  larger_mant;
+
   always_ff @( posedge clk ) begin // exp compare
     if(rst)
-      exp_dif <=0;
+      exp_dif     <=0;
+      larger_mant <=0;
     else begin // For optimization, avoid using subtraction after this calc
-      exp_dif <= (pipelined_num1[1].exp > pipelined_num2[1].exp) ? (pipelined_num1[1].exp - pipelined_num2[1].exp) : (pipelined_num2[1].exp - pipelined_num1[1].exp);
+      larger_mant <=  pipelined_num1[1].exp > pipelined_num2[1].exp
+      exp_dif     <= (pipelined_num1[1].exp > pipelined_num2[1].exp) ? (pipelined_num1[1].exp - pipelined_num2[1].exp) : (pipelined_num2[1].exp - pipelined_num1[1].exp);
     end
   end
 
   always_ff @( posedge clk ) begin // exp shift
-    if(pipelined_num1[2].exp > pipelined_num2[2].exp)
+    if(larger_mant)
       pipelined_num2[2].exp <= pipelined_num2[2].exp >> exp_dif;
     else
       pipelined_num1[2].exp <= pipelined_num1[2].exp >> exp_dif;
   end
 
+  logic [24:0] mant_sum ;
+
+
+  always_ff @( posedge clk ) begin // mant + ot -
+    if(rst)
+      mant_sum <= 'b0;
+    else begin
+
+    end
+  end
 
 
 
