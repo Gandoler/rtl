@@ -22,10 +22,7 @@ module floating_point_adder (
     output logic        res_vld
 );
 
-  //shift ref
-  float_point_num  a_num [0:5], b_num [0:5];
-  logic           [5:0] a_vld;
-  states          [5:0] states_res;
+
 
    always_ff @( posedge clk ) begin // fetch
     if (rst) begin

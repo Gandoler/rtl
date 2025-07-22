@@ -14,24 +14,20 @@ module shift_reg_for_struct#(
 );
 
 
-  float_point_num pipeline [0:STAGES-1];
 
 
   always_ff @(posedge clk) begin
     if(rst) begin
         for(int i=0; i < STAGES; i++)
-          pipeline[i] <='b0;
+          out_data[i] <='b0;
     end
     else if(en) begin
-      pipeline[0] <= in_data
+      out_data[0] <= in_data
       for(int i=1; i < STAGES; i++) begin
-        pipeline[i] <= pipeline[i-1];
+        out_data[i] <= out_data[i-1];
       end
     end
 
 
   end
-
-  assign out_data <= pipeline[STAGES-1];
-
 endmodule
