@@ -10,7 +10,7 @@ module division#(
    logic [width-1:0] R_out [width-1:0];
    logic [width-1:0] B_out [width-1:0];
    logic [width-1:0] C_out [width-1:0];
-   logic [width-1:0] D                ;
+   logic [width-1:0] D     [width-1:0];
    logic             junk             ;
 
    generate
@@ -24,10 +24,10 @@ module division#(
                .R(A[width-1]),
                .B(!B[0]),
                .C_in('b1),
-               .D(),
-               
-               .C_out('b1),
-               .N(D[0]),
+               .D(D[i][j]),
+
+               .C_out(C_out[i][j]),
+               .N(D[0][j]),
                .B_out(B_out[i][j]),
                .R_out(R_out[i][j])
              );
@@ -37,10 +37,10 @@ module division#(
                .R(A[width -1 - j]),
                .B(B_out[i][j-1]),
                .C_in('b1),
-               .D(),
-               
+               .D(D[i][j]),
+
                .C_out(C_out[i][j]),
-               .N(D[j]),
+               .N(D[0][j]),
                .B_out(B_out[i][j]),
                .R_out(R_out[i][j])
              );
@@ -50,10 +50,10 @@ module division#(
                .R('b0),
                .B(!B[(width - 1) - i]),
                .C_in(C_out[i+1][j]),
-               .D((i == 0)? D[j] : junk),
-               
+               .D(D[i][j]),
+
                .C_out(C_out[i][j]),
-               .N(D[j]),
+               .N(D[0][j]),
                .B_out(B_out[i][j]),
                .R_out(R_out[i][j])
              );
@@ -63,10 +63,10 @@ module division#(
                .R(R_out[i+1][j]),
                .B(B_out[i][j-1]),
                .C_in(C_out[i+1][j]),
-               .D((i == 0)? D[j] : junk),
-               
+               .D(D[i][j]),
+
                .C_out(C_out[i][j]),
-               .N(D[j]),
+               .N(D[0][j]),
                .B_out(B_out[i][j]),
                .R_out(R_out[i][j])
              );

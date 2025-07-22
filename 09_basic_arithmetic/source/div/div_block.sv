@@ -13,12 +13,12 @@ module div_block(
 logic adder_sum;
 
 fulladder adder(
-  a_i(R),
-  b_i(B),
-  carry_i(C_in),
-  sum_o(adder_sum),
+  .a_i(R),
+  .b_i(B),
+  .carry_i(C_in),
+  .sum_o(adder_sum),
 
-  carry_o(C_out)
+  .carry_o(C_out)
 );
 
 
