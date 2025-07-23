@@ -149,7 +149,7 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
   end
 
   logic found_1;
-  
+
   always_ff @( posedge clk ) begin  // normilize
     if(rst)
       found_1                <= 'b0;
