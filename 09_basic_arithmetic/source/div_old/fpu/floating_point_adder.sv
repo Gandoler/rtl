@@ -1,5 +1,5 @@
-`include "C:/Users/glkru/intership/Internship/09_basic_arithmetic/source/fpu/pipiline_reg_for_struct.sv"
-import float_struct::*;
+`include "C:\Users\glkru\intership\Internship\09_basic_arithmetic\source\fpu\struct_types.sv"
+import struct_types::*;
 
  typedef enum logic[1:0]{
     OK  = 2'b00,
@@ -21,18 +21,18 @@ module floating_point_adder #(
 
     output float_point_num result,
     output logic   [1:0]   res_state
-);
+)
 
   logic           en;
   logic [1:0]     state;
 
   float_point_num pipelined_input1;
   float_point_num pipelined_input2;
-  
+
   float_point_num pipelined_num1 [0 : STAGES-1];
   float_point_num pipelined_num2 [0 : STAGES-1];
 
-  shift_reg_base #(.STAGES(STAGES), .WIDTH(WIDTH)) shift_reg_base
+  shift_reg_base #(.STAGES(STAGES), .WIDTH(WIDTH)) shift_reg_base_1
   (
   .clk(clk),
   .rst(rst),
@@ -42,7 +42,7 @@ module floating_point_adder #(
   .out_data(res_state)
 );
 
-  shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_1
+  pipiline_reg_for_struct #(.STAGES(STAGES)) pipiline_reg_for_struct_1
 
   (
   .clk(clk),
@@ -52,7 +52,7 @@ module floating_point_adder #(
   .out_data(pipelined_num1)
 );
 
-shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
+pipiline_reg_for_struct #(.STAGES(STAGES)) pipiline_reg_for_struct_2
   (
   .clk(clk),
   .rst(rst),

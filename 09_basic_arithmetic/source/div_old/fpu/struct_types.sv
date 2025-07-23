@@ -1,4 +1,4 @@
-package float_struct;
+package struct_types;
   typedef struct {
     logic        sign;
     logic [7:0]  exp;

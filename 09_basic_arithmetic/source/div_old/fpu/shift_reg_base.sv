@@ -1,9 +1,9 @@
-`include "struct_types.sv"
-import float_struct::*;
+`include "C:/Users/glkru/intership/Internship/09_basic_arithmetic/source/fpu/struct_types.sv"
+import struct_types::*;
 
 
 module shift_reg_base#(
-  parameter STAGES = 6, WIDTH=32;
+  parameter STAGES = 6, WIDTH=32
 )(
   input                    clk,
   input                    rst,
@@ -23,7 +23,7 @@ logic [WIDTH-1:0] pipeline [0:STAGES-1];
           pipeline[i] <='b0;
     end
     else if(en) begin
-      pipeline[0] <= in_data
+      pipeline[0] <= in_data;
       for(int i=1; i < STAGES; i++) begin
         pipeline[i] <= pipeline[i-1];
       end
@@ -31,5 +31,5 @@ logic [WIDTH-1:0] pipeline [0:STAGES-1];
   end
 
 
-  assign out_data <= pipeline[STAGES-1];
+  assign out_data = pipeline[STAGES-1];
 endmodule

@@ -1,9 +1,16 @@
-`include "C:/Users/glkru/intership/Internship/09_basic_arithmetic/source/fpu/pipiline_reg_for_struct.sv"
-import float_struct::*;
-
 `timescale 1ns/1ps
 
-module fpu_adder_tb ();
+`include "C:/Users/glkru/intership/Internship/09_basic_arithmetic/source/fpu/struct_types.sv"
+`include "C:/Users/glkru/intership/Internship/09_basic_arithmetic/source/fpu/floating_point_adder.sv"
+`include "C:/Users/glkru/intership/Internship/09_basic_arithmetic/source/fpu/shift_reg_base.sv"
+`include "C:/Users/glkru/intership/Internship/09_basic_arithmetic/source/fpu/pipiline_reg_for_struct.sv"
+
+
+import struct_types::*;
+
+
+
+module tb_fpu_adder ();
   float_point_num num1, num2, res;
   reg clk;
   reg rst;
@@ -34,7 +41,7 @@ module fpu_adder_tb ();
       #10;
       num1 = '{sign:1'b0, exp:8'b01111111, mant:23'b00100110011001100110011}; // 1.12
       num2 = '{sign:1'b0, exp:8'b10000001, mant:23'b00101001100110011001101}; // 4.65
-      #8000;
+      #800;
 
 
       $display("\n The test is over \n See the internal signals of the module on the waveform \n");
