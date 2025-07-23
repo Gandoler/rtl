@@ -27,8 +27,8 @@ module floating_point_adder #(
   logic                  en;
   logic                  state;
 
-  float_point_num pipelined_num1 [0 : 6-1];
-  float_point_num pipelined_num2 [0 : 6-1];
+  float_point_num pipelined_num1 [0 : STAGES-1];
+  float_point_num pipelined_num2 [0 : STAGES-1];
 
   shift_reg_base #(.STAGES(STAGES), .WIDTH(WIDTH)) shift_reg_base
   (
@@ -70,17 +70,17 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
       pipelined_input2.exp   <= 'b0;
       pipelined_input2.mant  <= 'b0;
     end else if(arg_vld) begin
-      pipelined_input1.sign  <= a[31];
-      pipelined_input1.exp   <= a[30:23];
-      pipelined_input1.mant  <= {1'b1, b[22:0]};
+      pipelined_input1.sign  <= a.sign;
+      pipelined_input1.exp   <= a.exp;
+      pipelined_input1.mant  <= {1'b1, a.mant };
 
-      pipelined_input2.sign  <= b[31];
-      pipelined_input2.exp   <= b[30:23];
-      pipelined_input2.mant  <= {1'b1, b[22:0]};
+      pipelined_input2.sign  <= b.sign;
+      pipelined_input2.exp   <= b.exp;
+      pipelined_input2.mant  <= {1'b1, b.mant };
     end
   end
 
-  always_ff @( posedge clk ) begin // fetch
+  always_ff @( posedge clk ) begin
     if (rst) begin
       state                  <= 1'b0;
     end else begin
@@ -154,14 +154,13 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
       pipelined_num1[4].mant <= mant_sum[23:1];
     end else if(mant_sum[23]) begin // all good
       pipelined_num1[4].mant <= mant_sum[22:0];
-    end else begin
+    end else begin // denormilize
 
     end
 
-  assign
-
   end
 
+  assign result = pipelined_num1[5];
 
 
 endmodule
