@@ -15,12 +15,12 @@ module floating_point_adder #(
     input               clk,
     input               rst,
 
-    input  logic [31:0] a,
-    input  logic [31:0] b,
+    input  float_point_num a,
+    input  float_point_num b,
     input  logic        arg_vld,
 
-    output logic [31:0] result,
-    output logic [1:0]  state,
+    output float_point_num result,
+    output float_point_num  state,
     output logic        res_vld
 );
 
