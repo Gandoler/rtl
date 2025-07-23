@@ -1,4 +1,4 @@
-`include "struct_types.sv"
+`include "C:/Users/glkru/intership/Internship/09_basic_arithmetic/source/fpu/pipiline_reg_for_struct.sv"
 import float_struct::*;
 
 module shift_reg_for_struct #(

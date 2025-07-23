@@ -1,3 +1,6 @@
+`include "C:/Users/glkru/intership/Internship/09_basic_arithmetic/source/fpu/pipiline_reg_for_struct.sv"
+import float_struct::*;
+
 `timescale 1ns/1ps
 
 module fpu_adder_tb ();
