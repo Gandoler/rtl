@@ -148,13 +148,32 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
     end
   end
 
+  logic found_1;
+
   always_ff @( posedge clk ) begin  // normilize
-    if(mant_sum[24]) begin // overflow
+    if(rst)
+      found_1                <= 'b0;
+    else if(mant_sum[24]) begin // overflow
       pipelined_num1[4].exp  <= pipelined_num1[4].exp +1;
       pipelined_num1[4].mant <= mant_sum[23:1];
     end else if(mant_sum[23]) begin // all good
       pipelined_num1[4].mant <= mant_sum[22:0];
     end else begin // denormilize
+      found_1                <= 'b0;
+      pipelined_num1[4].exp  <= 'b0;
+      pipelined_num1[4].mant <= 'b0;
+
+      for(int i = 22; i >= 0; i++)begin
+        if(mant_sum[i] && (!found_1)) begin
+          pipelined_num1[4].exp  <= pipelined_num1[4].exp - (22 - i + 1);
+          pipelined_num1[4].mant <= sum_mant[i-1:0] << (22 - i);
+          found_1                <= 'b1;
+        end
+      end
+
+      if(!found_1)
+        pipelined_num1[4].sign <= 'b0;
+
 
     end
 
