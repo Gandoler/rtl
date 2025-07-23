@@ -4,7 +4,7 @@ module fpu_adder_tb ();
   float_point_num num1, num2, res;
   reg clk;
   reg rst;
-  logic [1:0] res_state
+  logic [1:0] res_state;
 
 
 
@@ -28,9 +28,9 @@ module fpu_adder_tb ();
       rst = 1;
       #40;
       rst = 0;
-      #10
-      num1 = '{sign:1'b0, exp:8'b01111111, mant:23'b00100110011001100110011} // 1.12
-      num2 = '{sign:1'b0, exp:8'b10000001, mant:23'b00101001100110011001101} // 4.65
+      #10;
+      num1 = '{sign:1'b0, exp:8'b01111111, mant:23'b00100110011001100110011}; // 1.12
+      num2 = '{sign:1'b0, exp:8'b10000001, mant:23'b00101001100110011001101}; // 4.65
       #8000;
 
 
