@@ -10,7 +10,7 @@ import float_struct::*;
 
 
 module floating_point_adder #(
-  parameter STAGES = 6, WIDTH=1
+  parameter STAGES = 6, WIDTH=2
 )(
     input                  clk,
     input                  rst,
@@ -20,13 +20,15 @@ module floating_point_adder #(
     input  logic           arg_vld,
 
     output float_point_num result,
-    output logic [1:0]     state,
-    output logic           res_vld
+    output logic   [1:0]   res_state
 );
 
   logic           en;
-  logic           state;
+  logic [1:0]     state;
 
+  float_point_num pipelined_input1;
+  float_point_num pipelined_input2;
+  
   float_point_num pipelined_num1 [0 : STAGES-1];
   float_point_num pipelined_num2 [0 : STAGES-1];
 
@@ -37,7 +39,7 @@ module floating_point_adder #(
   .en(en),
   .in_data(state),
 
-  .out_data(res_vld)
+  .out_data(res_state)
 );
 
   shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_1
@@ -55,20 +57,16 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
   .clk(clk),
   .rst(rst),
   .en(en),
-  .in_data(pipelined_input1),
+  .in_data(pipelined_input2),
   .out_data(pipelined_num2)
 );
 
 
    always_ff @( posedge clk ) begin // fetch
     if (rst) begin
-      ppipelined_input1.sign <= 'b0;
-      pipelined_input1.exp   <= 'b0;
-      pipelined_input1.mant  <= 'b0;
+      pipelined_input1      <= '{sign:1'b0, exp:8'b0, mant:23'b0};
+      pipelined_input2      <= '{sign:1'b0, exp:8'b0, mant:23'b0};
 
-      pipelined_input2.sign  <= 'b0;
-      pipelined_input2.exp   <= 'b0;
-      pipelined_input2.mant  <= 'b0;
     end else if(arg_vld) begin
       pipelined_input1.sign  <= a.sign;
       pipelined_input1.exp   <= a.exp;
@@ -82,12 +80,12 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
 
   always_ff @( posedge clk ) begin
     if (rst) begin
-      state                  <= 1'b0;
+      state                  <= 1'b00;
     end else begin
       if(((&a.exp) == 1) || ((&b.exp) == 1))  // if     1 or 2 exp  == 255, --> badstate
-        state                <= 1'b0;
+        state                <= 2'b10;
       else
-        state                <= 1'b1;
+        state                <= 2'b11;
     end
   end
 
@@ -163,7 +161,7 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
       pipelined_num1[4].exp      <= 'b0;
       pipelined_num1[4].mant     <= 'b0;
 
-      for(int i = 22; i >= 0; i++)begin
+      for(int i = 22; i >= 0; i--)begin
         if(mant_sum[i] && (!found_1)) begin
           pipelined_num1[4].exp  <= pipelined_num1[4].exp - (22 - i + 1);
           pipelined_num1[4].mant <= mant_sum[24:0] << (22 - i);
@@ -180,6 +178,5 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
   end
 
   assign result = pipelined_num1[5];
-
 
 endmodule

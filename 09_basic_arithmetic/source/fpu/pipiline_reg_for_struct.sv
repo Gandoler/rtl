@@ -19,7 +19,7 @@ always_ff @(posedge clk) begin
       reg_data[i] <= '{sign:1'b0, exp:8'b0, mant:23'b0};
   end
   else if (en) begin
-    reg_data[0] <= in_data; 
+    reg_data[0]   <= in_data; 
     
     for (int i = 1; i < STAGES; i++)
       reg_data[i] <= reg_data[i-1];
