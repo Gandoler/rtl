@@ -3,7 +3,7 @@ import float_struct::*;
 
 
 module shift_reg_for_struct#(
-  parameter STAGES = 6;
+  parameter STAGES = 6
 )(
   input                  clk,
   input                  rst,

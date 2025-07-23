@@ -12,16 +12,16 @@ import float_struct::*;
 module floating_point_adder #(
   parameter STAGES = 6, WIDTH=1
 )(
-    input               clk,
-    input               rst,
+    input                  clk,
+    input                  rst,
 
     input  float_point_num a,
     input  float_point_num b,
-    input  logic        arg_vld,
+    input  logic           arg_vld,
 
     output float_point_num result,
-    output float_point_num  state,
-    output logic        res_vld
+    output logic [1:0]     state,
+    output logic           res_vld
 );
 
   logic                  en;
@@ -84,7 +84,7 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
     if (rst) begin
       state                  <= 1'b0;
     end else begin
-      if(((&a[30:23]) == 1) || ((&b[30:23]) == 1))  // if     1 or 2 mant  == 255, --> badstate
+      if(((&a.exp) == 1) || ((&b.exp) == 1))  // if     1 or 2 exp  == 255, --> badstate
         state                <= 1'b0;
       else
         state                <= 1'b1;
@@ -149,7 +149,7 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
   end
 
   logic found_1;
-
+  
   always_ff @( posedge clk ) begin  // normilize
     if(rst)
       found_1                <= 'b0;
@@ -166,7 +166,7 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
       for(int i = 22; i >= 0; i++)begin
         if(mant_sum[i] && (!found_1)) begin
           pipelined_num1[4].exp  <= pipelined_num1[4].exp - (22 - i + 1);
-          pipelined_num1[4].mant <= sum_mant[i-1:0] << (22 - i);
+          pipelined_num1[4].mant <= mant_sum[24:0] << (22 - i);
           found_1                <= 'b1;
         end
       end
