@@ -102,21 +102,21 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
 
 
   logic signed  [7:0]    exp_dif;
-  logic                  larger_mant;
+  logic         [1:0]    larger_mant; // shift reg for transfer result across two clk + optimization
 
   always_ff @( posedge clk ) begin // exp compare
     if(rst) begin
-      exp_dif     <=0;
-      larger_mant <=0;
+      exp_dif     <='b0;
+      larger_mant <='b0;
     end else begin // For optimization, avoid using subtraction after this calc
-      larger_mant <=  pipelined_num1[1].exp > pipelined_num2[1].exp;
+      larger_mant[0] <=  pipelined_num1[1].exp > pipelined_num2[1].exp;
       exp_dif     <= (pipelined_num1[1].exp > pipelined_num2[1].exp) ? (pipelined_num1[1].exp - pipelined_num2[1].exp) : (pipelined_num2[1].exp - pipelined_num1[1].exp);
     end
   end
 
 
   always_ff @( posedge clk ) begin // exp shift
-    if(larger_mant) begin
+    if(larger_mant[0]) begin
       pipelined_num2[2].mant <= pipelined_num2[2].mant >> exp_dif;
       pipelined_num2[2].exp  <= pipelined_num1[2].exp;
     end
@@ -124,6 +124,7 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
       pipelined_num1[2].mant <= pipelined_num1[2].mant >> exp_dif;
       pipelined_num1[2].exp  <= pipelined_num2[2].exp;
     end
+    larger_mant[1] <= larger_mant[0];
   end
 
   logic [24:0] mant_sum ;
@@ -136,12 +137,13 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
       if(pipelined_num1[3].sign == pipelined_num2[3].sign) begin
         mant_sum <= {1'b0, pipelined_num1[3].mant} + {1'b0, pipelined_num2[3].mant};
       end else begin
-        if(pipelined_num1[3].mant > pipelined_num2[3].mant) begin
-          mant_sum <= {1'b0, pipelined_num1[3].mant} - {1'b0, pipelined_num2[3].mant};
-          pipelined_num1[3].sign <=
+        if(pipelined_num1[3].sign) begin // 1  - minus a
+          mant_sum <= {1'b0, pipelined_num2[3].mant} - {1'b0, pipelined_num1[3].mant}; // b-a
+          pipelined_num1[3].sign <= (larger_mant[1])? (1'b1) : (1'b0);
+        end else begin
+          mant_sum <= {1'b0, pipelined_num1[3].mant} - {1'b0, pipelined_num2[3].mant}; // b-a
+          pipelined_num1[3].sign <= (larger_mant[1])? (1'b0) : (1'b1);
         end
-
-
       end
     end
   end
