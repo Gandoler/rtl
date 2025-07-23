@@ -137,7 +137,8 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
         mant_sum <= {1'b0, pipelined_num1[3].mant} + {1'b0, pipelined_num2[3].mant};
       end else begin
         if(pipelined_num1[3].mant > pipelined_num2[3].mant) begin
-         mant_sum <= {1'b0, pipelined_num1[3].mant} - {1'b0, pipelined_num2[3].mant};
+          mant_sum <= {1'b0, pipelined_num1[3].mant} - {1'b0, pipelined_num2[3].mant};
+          pipelined_num1[3].sign <=
         end
 
 
