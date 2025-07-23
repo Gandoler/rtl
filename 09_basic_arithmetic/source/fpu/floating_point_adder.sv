@@ -148,7 +148,19 @@ shift_reg_for_struct #(.STAGES(STAGES)) shift_reg_for_struct_2
     end
   end
 
+  always_ff @( posedge clk ) begin  // normilize
+    if(mant_sum[24]) begin // overflow
+      pipelined_num1[4].exp  <= pipelined_num1[4].exp +1;
+      pipelined_num1[4].mant <= mant_sum[23:1];
+    end else if(mant_sum[23]) begin // all good
+      pipelined_num1[4].mant <= mant_sum[22:0];
+    end else begin
 
+    end
+
+  assign
+
+  end
 
 
 
