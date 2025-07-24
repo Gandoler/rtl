@@ -19,7 +19,7 @@ module sequence_fp_summator (
   float_point_num a_l, b_l;
 
   always_comb begin : fetch
-    a_l = '{sign : a_i.sign, exp : a_i.exp, mant : ({1'b1, a_i.mant})};
+    a_i = '{sign : a_i.sign, exp : a_i.exp, mant : ({1'b1, a_i.mant})};
 
     b_l = '{sign : b_i.sign, exp : b_i.exp, mant : ({1'b1, b_i.mant})};
   end
