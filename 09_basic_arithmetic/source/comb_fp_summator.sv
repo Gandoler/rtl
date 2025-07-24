@@ -2,7 +2,7 @@ import struct_types::*;
 
 
 typedef enum {
-  OK         = 1'b0,
+  OK_state         = 1'b0,
   NAN_or_INF = 1'b1
 } num_status;
 
@@ -31,7 +31,7 @@ module sequence_fp_summator (
     if(((&a_i.exp) == 'b1) || ((&b_i.exp) == 'b1))
       num_status = NAN_or_INF;
     else
-      num_status = OK;
+      num_status = OK_state;
   end
 
  logic       larger_exp;
@@ -94,13 +94,14 @@ module sequence_fp_summator (
   end
 
   logic found_1;
+  logic [7:0] new_exp;
 
   always_comb begin : denormilize_case
     found_1 = 1'b0;
     if(denormilize) begin
       for(int i = 22; i >= 0; i--)begin
         if(mant_sum[i] && (!found_1)) begin
-          a_l.exp  <= a_l.exp - (22 - i + 1);
+          new_exp  <= a_l.exp - (22 - i + 1);
           mant_sum <= mant_sum << (22 - i);
           found_1                <= 'b1;
         end
@@ -108,7 +109,7 @@ module sequence_fp_summator (
 
 
       if(found_1) begin
-        answer = '{sign : res_sign, exp : a_l.exp , mant : mant_sum[22:0]};
+        answer = '{sign : res_sign, exp : new_exp , mant : mant_sum[22:0]};
       end else
         answer.sign   <= 'b0;
     end
