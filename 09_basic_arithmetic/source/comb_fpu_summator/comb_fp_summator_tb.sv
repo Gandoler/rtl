@@ -1,6 +1,6 @@
 
 module tb_fp_adder;
-import struct_types::*;
+import float_types_pkg::*;
 
   float_point_num a_i, b_i;
   logic vld_i = 1;

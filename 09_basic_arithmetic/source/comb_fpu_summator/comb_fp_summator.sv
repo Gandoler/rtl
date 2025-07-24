@@ -1,4 +1,4 @@
-import struct_types::*;
+import float_types_pkg::*;
 
 
 typedef enum {
@@ -19,7 +19,7 @@ module sequence_fp_summator (
   float_point_num a_l, b_l;
 
   always_comb begin : fetch
-    a_i = '{sign : a_i.sign, exp : a_i.exp, mant : ({1'b1, a_i.mant})};
+    a_l = '{sign : a_i.sign, exp : a_i.exp, mant : ({1'b1, a_i.mant})};
 
     b_l = '{sign : b_i.sign, exp : b_i.exp, mant : ({1'b1, b_i.mant})};
   end
@@ -45,15 +45,13 @@ module sequence_fp_summator (
       exp_dif = b_l.exp - a_l.exp;
   end
 
+  float_point_num new_a, new_b;
 
   always_comb begin : mant_shift
-    if(larger_exp) begin
-      b_l.mant = b_l.mant >> exp_dif;
-      b_l.exp  = a_l.exp;
-    end else begin
-      a_l.mant = a_l.mant >> exp_dif;
-      a_l.exp  = b_l.exp;
-    end
+    if(larger_exp)
+      new_b  = '{sign : b_l.sign, exp :  a_l.exp, mant : ( b_l.mant >> exp_dif)};
+    else
+      new_a = '{sign : a_l.sign, exp :  b_l.exp, mant : (a_l.mant >> exp_dif)};
   end
 
 
@@ -62,16 +60,16 @@ module sequence_fp_summator (
 
 
   always_comb begin : mant_plus_or_minus
-    if(a_l.sign == b_l.sign) begin
-      mant_sum = {1'b0, a_l.mant} + {1'b0, b_l.mant};
-      res_sign = a_l.sign;
+    if(new_a.sign == new_b.sign) begin
+      mant_sum = {1'b0, new_a.mant} + {1'b0, new_b.mant};
+      res_sign = new_a.sign;
     end else begin
-      if(a_l.sign)begin
-        mant_sum = {1'b0, b_l.mant} - {1'b0, a_l.mant};
-        res_sign = a_l.mant > b_l.mant;
+      if(new_a.sign)begin
+        mant_sum = {1'b0, new_b.mant} - {1'b0, new_a.mant};
+        res_sign = new_a.mant > new_b.mant;
       end else begin
-         mant_sum = {1'b0, a_l.mant} - {1'b0, b_l.mant};
-         res_sign = b_l.mant > a_l.mant;
+         mant_sum = {1'b0, new_a.mant} - {1'b0, new_b.mant};
+         res_sign = new_b.mant > new_a.mant;
       end
     end
   end
