@@ -29,9 +29,9 @@ module sequence_fp_summator (
 
   always_comb begin : status
     if(((&a_i.exp) == 'b1) || ((&b_i.exp) == 'b1))
-      num_status = 1'b0;
+      num_status = NAN_or_INF;
     else
-      num_status = 1'b1;
+      num_status = OK;
   end
 
  logic       larger_exp;
@@ -48,10 +48,10 @@ module sequence_fp_summator (
 
   always_comb begin : mant_shift
     if(larger_exp) begin
-      b_l.mant = b_l.mant >> exp;
+      b_l.mant = b_l.mant >> exp_dif;
       b_l.exp  = a_l.exp;
     end else begin
-      a_l.mant = a_l.mant >> exp;
+      a_l.mant = a_l.mant >> exp_dif;
       a_l.exp  = b_l.exp;
     end
   end
@@ -61,8 +61,8 @@ module sequence_fp_summator (
   logic        res_sign;
 
 
-  always_comb begin : mant_sum
-    if(a_l.sign = b_l.sign) begin
+  always_comb begin : mant_plus_or_minus
+    if(a_l.sign == b_l.sign) begin
       mant_sum = {1'b0, a_l.mant} + {1'b0, b_l.mant};
       res_sign = a_l.sign;
     end else begin
@@ -76,7 +76,7 @@ module sequence_fp_summator (
     end
   end
 
-  logic float_point_num answer;
+   float_point_num answer;
 
 
     logic denormilize;
@@ -115,7 +115,7 @@ module sequence_fp_summator (
   end
 
 
-assign answer_o = '{sign : answer,sign, exp : answer.exp , mant : answer.mant};
+assign answer_o = '{sign : answer.sign, exp : answer.exp, mant : answer.mant};
 
 
 endmodule
