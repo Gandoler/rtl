@@ -6,7 +6,7 @@ typedef enum {
   NAN_or_INF = 1'b1
 } num_status;
 
-module sequence_fp_summator (
+module comb_fp_summator (
   input  float_point_num a_i,
   input  float_point_num b_i,
   input  logic           vld_i,
@@ -47,7 +47,7 @@ module sequence_fp_summator (
 
   float_point_num new_a, new_b;
 
-  always_comb begin : mant_shift
+  always_comb begin : mant_shiftt
     if(larger_exp)
       new_b  = '{sign : b_l.sign, exp :  a_l.exp, mant : ( b_l.mant >> exp_dif)};
     else
@@ -86,35 +86,38 @@ module sequence_fp_summator (
       answer = '{sign : res_sign, exp : a_l.exp, mant : mant_sum[22:0]};
       denormilize = 1'b0;
     end else begin
-      answer = '{sign : 'b0, exp : 'b0, mant : 'b0};
       denormilize = 1'b1;
     end
   end
 
   logic found_1;
   logic [7:0] new_exp;
+  logic [24:0] mant_shift;
+  float_point_num answer_normilize;
 
   always_comb begin : denormilize_case
+  answer_normilize = '{sign : 'b0, exp : 'b0, mant : 'b0};
+    mant_shift = mant_sum;
     found_1 = 1'b0;
     if(denormilize) begin
       for(int i = 22; i >= 0; i--)begin
-        if(mant_sum[i] && (!found_1)) begin
-          new_exp  <= a_l.exp - (22 - i + 1);
-          mant_sum <= mant_sum << (22 - i);
+        if(mant_shift[i] && (!found_1)) begin
+          new_exp  = a_l.exp - (22 - i + 1);
+          mant_shift = mant_shift << (22 - i);
           found_1                <= 'b1;
         end
       end
 
 
       if(found_1) begin
-        answer = '{sign : res_sign, exp : new_exp , mant : mant_sum[22:0]};
+        answer_normilize = '{sign : res_sign, exp : new_exp , mant : mant_shift[22:0]};
       end else
-        answer.sign   <= 'b0;
+        answer_normilize.sign   <= 'b0;
     end
   end
 
 
-assign answer_o = '{sign : answer.sign, exp : answer.exp, mant : answer.mant};
+assign answer_o = denormilize? '{sign : answer_normilize.sign, exp : answer_normilize.exp, mant : answer_normilize.mant} : '{sign : answer.sign, exp : answer.exp, mant : answer.mant};
 
 
 endmodule
