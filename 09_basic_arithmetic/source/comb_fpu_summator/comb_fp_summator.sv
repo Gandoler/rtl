@@ -1,10 +1,7 @@
 import float_types_pkg::*;
 
 
-typedef enum {
-  OK_state         = 1'b0,
-  NAN_or_INF = 1'b1
-} num_status;
+
 
 module comb_fp_summator (
   input  float_point_num a_i,
@@ -19,9 +16,9 @@ module comb_fp_summator (
   float_point_num a_l, b_l;
 
   always_comb begin : fetch
-    a_l = '{sign : a_i.sign, exp : a_i.exp, mant : ({1'b1, a_i.mant})};
+    a_l = '{sign : a_i.sign, exp : a_i.exp, mant : ({1'b1, a_i.mant[22:0]})};
 
-    b_l = '{sign : b_i.sign, exp : b_i.exp, mant : ({1'b1, b_i.mant})};
+    b_l = '{sign : b_i.sign, exp : b_i.exp, mant : ({1'b1, b_i.mant[22:0]})};
   end
 
 
@@ -48,10 +45,12 @@ module comb_fp_summator (
   float_point_num new_a, new_b;
 
   always_comb begin : mant_shiftt
+    new_b = b_l;
+    new_a = a_l;
     if(larger_exp)
-      new_b  = '{sign : b_l.sign, exp :  a_l.exp, mant : ( b_l.mant >> exp_dif)};
+      new_b  = '{sign : new_b.sign, exp :  new_a.exp, mant : ( new_b.mant >> exp_dif)};
     else
-      new_a = '{sign : a_l.sign, exp :  b_l.exp, mant : (a_l.mant >> exp_dif)};
+      new_a = '{sign : new_a.sign, exp :  new_b.exp, mant : (new_a.mant >> exp_dif)};
   end
 
 
@@ -79,11 +78,12 @@ module comb_fp_summator (
 
     logic denormilize;
   always_comb begin : get_res
+    answer  = '{sign : 'b0, exp : 'b0, mant : 'b0};
     if(mant_sum[24]) begin
-      answer = '{sign : res_sign, exp : (a_l.exp + 1), mant : mant_sum[23:1]};
+      answer = '{sign : res_sign, exp : (new_a.exp + 1), mant : mant_sum[23:1]};
       denormilize = 1'b0;
     end else if (mant_sum[23]) begin
-      answer = '{sign : res_sign, exp : a_l.exp, mant : mant_sum[22:0]};
+      answer = '{sign : res_sign, exp : new_a.exp, mant : mant_sum[22:0]};
       denormilize = 1'b0;
     end else begin
       denormilize = 1'b1;
@@ -92,7 +92,7 @@ module comb_fp_summator (
 
   logic found_1;
   logic [7:0] new_exp;
-  logic [24:0] mant_shift;
+  logic [25:0] mant_shift;
   float_point_num answer_normilize;
 
   always_comb begin : denormilize_case
@@ -117,7 +117,7 @@ module comb_fp_summator (
   end
 
 
-assign answer_o = denormilize? '{sign : answer_normilize.sign, exp : answer_normilize.exp, mant : answer_normilize.mant} : '{sign : answer.sign, exp : answer.exp, mant : answer.mant};
-
+assign answer_o = denormilize? answer_normilize : answer;
+assign answer_status_o = num_status;
 
 endmodule
