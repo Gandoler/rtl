@@ -5,8 +5,9 @@ typedef struct packed {
   logic [23:0] mant;
 } float_point_num;
 
-typedef enum logic{
-  OK_state         = 1'b0,
-  NAN_or_INF = 1'b1
+typedef enum logic [1:0]{
+  OK_state         = 2'b00,
+  NAN_or_INF = 2'b01,
+  ZERO_res = 2'b10
 } num_status;
 endpackage

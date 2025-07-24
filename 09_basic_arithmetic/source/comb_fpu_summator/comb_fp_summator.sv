@@ -9,7 +9,7 @@ module comb_fp_summator (
   input  logic           vld_i,
 
 
-  output logic           answer_status_o,
+  output logic   [1:0]    answer_status_o,
   output float_point_num answer_o
 );
 
@@ -22,10 +22,12 @@ module comb_fp_summator (
   end
 
 
-  logic           num_status;
+  logic   [1:0]     num_status;
 
   always_comb begin : status
-    if(((&a_i.exp) == 'b1) || ((&b_i.exp) == 'b1))
+    if((a_i.mant == 'b0) && (b_i.mant == 'b0) && (a_i.exp == 'b0) && (b_i.exp == 'b0))
+        num_status = ZERO_res;
+    else if(((&a_i.exp) == 'b1) || ((&b_i.exp) == 'b1))
       num_status = NAN_or_INF;
     else
       num_status = OK_state;
@@ -96,21 +98,21 @@ module comb_fp_summator (
   float_point_num answer_normilize;
 
   always_comb begin : denormilize_case
-  answer_normilize = '{sign : 'b0, exp : 'b0, mant : 'b0};
+    answer_normilize = '{sign : 'b0, exp : 'b0, mant : 'b0};
     mant_shift = mant_sum;
     found_1 = 1'b0;
     if(denormilize) begin
-      for(int i = 22; i >= 0; i--)begin
+      for(int i = 23; i >= 20; i--)begin
         if(mant_shift[i] && (!found_1)) begin
-          new_exp  = a_l.exp - (22 - i + 1);
+          new_exp  = new_a.exp - (22 - i + 1);
           mant_shift = mant_shift << (22 - i);
-          found_1                <= 'b1;
+          found_1                = 1'b1;
         end
       end
 
 
       if(found_1) begin
-        answer_normilize = '{sign : res_sign, exp : new_exp , mant : mant_shift[22:0]};
+        answer_normilize = '{sign : res_sign, exp : new_exp , mant : mant_shift[21:0]};
       end else
         answer_normilize.sign   <= 'b0;
     end
