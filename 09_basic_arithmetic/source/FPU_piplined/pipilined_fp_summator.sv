@@ -29,6 +29,7 @@ module pipilined_fp_summator import float_types_pkg::*; (
   (
     .clk_i(clk_i),
     .rst_i(rst_i),
+    .en(vld_i)
     .enter(ststus_o),
     .leave(num_status)
   );

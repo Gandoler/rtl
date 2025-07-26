@@ -1,9 +1,10 @@
 module shift_reg
 # (parameter WIDTH, STAGES)
 (
- input  loigc              clk,
- input  logic              rst,
+ input  loigc               clk,
+ input  logic               rst,
  input  logic [WIDTH - 1:0] enter,
+ input  logic               en,
 
 
  output logic [WIDTH - 1:0] leave
@@ -16,7 +17,7 @@ module shift_reg
     if(rst) begin
       for (int i = 0; i < STAGES; i ++)
         shift_reg [i] <= 'b0;
-    end else
+    end else if(en)
       shift_reg [0]   <= enter;
       for (int i = 1; i < STAGES; i ++)
         shift_reg [i] <= shift_reg [i-1] ;
