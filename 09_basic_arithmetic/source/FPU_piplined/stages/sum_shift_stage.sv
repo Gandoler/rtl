@@ -6,8 +6,7 @@ module sum_shift_stage import float_types_pkg::*;(
 
   output float_point_num answer_o,
   output logic           denormilize_state_o
-
-)
+);
 
 
   float_point_num answer;
