@@ -1,4 +1,4 @@
-module  import float_types_pkg::*;(
+module sum_stage import float_types_pkg::*;(
   input  float_point_num a_i,
   input  float_point_num b_i,
 
