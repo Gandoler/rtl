@@ -1,6 +1,6 @@
 module pipilined_fp_summator import float_types_pkg::*; (
-  input logic clk,
-  input logic rst,
+  input logic clk_i,
+  input logic rst_i,
 
   input loigc [31:0] a_i,
   input loigc [31:0] b_i,
@@ -11,7 +11,7 @@ module pipilined_fp_summator import float_types_pkg::*; (
 );
 
   float_point_num a_o, b_o;
-  logic [1:0]     state_o;
+  logic [1:0]     ststus_o;
 
   fetch_stage fetch_stage(
     .valid_i(vld_i),
@@ -20,15 +20,21 @@ module pipilined_fp_summator import float_types_pkg::*; (
 
     .a_o(a_o),
     .b_o(b_o),
-    .num_status(state_o)
+    .num_status(ststus_o)
   );
 
-  float_point_num a_fetch, b_fetch;
-  logic [1:0]     state;
-//todo state to shift reg
 
-  always_ff @( posedge clk ) begin : fetch_stage_reg
-    if(rst) begin
+  logic [1:0]     num_status;
+  shift_reg shift_reg # (.WIDTH(2), .STAGES())
+  (
+    .clk_i(clk_i),
+    .rst_i(rst_i),
+    .enter(ststus_o),
+    .leave(num_status)
+  );
+
+  always_ff @( posedge clk_i ) begin : fetch_stage_reg
+    if(rst_i) begin
       a_fetch <= '{sign : 'b0, exp : 'b0, mant : 'b0};
     end else begin
       a_fetch <= a_o;
@@ -48,8 +54,8 @@ module pipilined_fp_summator import float_types_pkg::*; (
 
 
   float_point_num a_shift, b_shift;
-  always_ff @( posedge clk ) begin : mant_shif_stage
-    if(rst) begin
+  always_ff @( posedge clk_i ) begin : mant_shif_stage
+    if(rst_i) begin
       a_shift <= '{sign : 'b0, exp : 'b0, mant : 'b0};
       b_shift <= '{sign : 'b0, exp : 'b0, mant : 'b0};
     end else begin
@@ -75,8 +81,8 @@ module pipilined_fp_summator import float_types_pkg::*; (
   logic res_sign;
   logic [7:0] a_i_exp;
 
-  always_ff @( posedge clk ) begin : sum_stage
-    if(rst) begin
+  always_ff @( posedge clk_i ) begin : sum_stage
+    if(rst_i) begin
       res_mant <= 'b0;
       res_sign <= 'b0;
       a_i_exp  <= 'b0;
@@ -117,8 +123,8 @@ module pipilined_fp_summator import float_types_pkg::*; (
 
   float_point_num answer;
 
-  always_ff @( posedge clk ) begin : sum_stage
-    if(rst) begin
+  always_ff @( posedge clk_i ) begin : sum_stage
+    if(rst_i) begin
       answer <= '{sign : 'b0, exp : 'b0, mant : 'b0};
     end else begin
       answer <= denormilize_state_o? answer_o_normilize : answer_o;
@@ -126,6 +132,7 @@ module pipilined_fp_summator import float_types_pkg::*; (
   end
 
 
-assign answer_o = answer;
+assign answer_o     = answer;
+assign num_status_o = num_status
 
 endmodule
