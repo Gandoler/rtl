@@ -8,24 +8,30 @@ module fetch_stage import float_types_pkg::*;(
   output logic           num_status
 );
 
-always_comb begin
-  if (valid_i) begin
-    a_o     = '{sign: a_i.sign, exp: a_i.exp, mant : ({1'b1, a_i.mant})};
+  float_point_num a_l , b_l;
 
-    b_o     = '{sign: b_i.sign, exp: b_i.exp, mant : ({1'b1, b_i.mant})};
-  end else begin
-    a_o = a_i;
-    b_o = b_i;
+  always_comb begin
+    if (valid_i) begin
+      a_l = '{sign : a_i.sign, exp : a_i.exp, mant : ({1'b1, a_i.mant[22:0]})};
+
+      b_l = '{sign : b_i.sign, exp : b_i.exp, mant : ({1'b1, b_i.mant[22:0]})};
+    end else begin
+      a_l = a_i;
+      b_l = b_i;
+    end
   end
-end
 
-always_comb begin
- if(((&a_i.exp) == 1'b1) || ((&b_i.exp) == 1'b1))
-   num_status = 1'b0;
- else
-    num_status = 1'b1;
-end
+  always_comb begin
+   if((a_i.mant == 'b0) && (b_i.mant == 'b0) && (a_i.exp == 'b0) && (b_i.exp == 'b0))
+          num_status = ZERO_res;
+      else if(((&a_i.exp) == 'b1) || ((&b_i.exp) == 'b1))
+        num_status = NAN_or_INF;
+      else
+        num_status = OK_state;
+  end
 
+  assign a_o = a_l;
+  assign b_o = b_l;
 
 
 endmodule
