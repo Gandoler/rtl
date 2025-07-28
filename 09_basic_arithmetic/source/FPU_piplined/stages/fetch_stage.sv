@@ -25,7 +25,7 @@ module fetch_stage import float_types_pkg::*;(
    if((a_i.mant == 'b0) && (b_i.mant == 'b0) && (a_i.exp == 'b0) && (b_i.exp == 'b0))
           num_status = ZERO_res;
       else if(((&a_i.exp) == 'b1) || ((&b_i.exp) == 'b1))
-        num_status = NAN_or_INF;
+        num_status = INF_OR_NAN;
       else
         num_status = OK_state;
   end

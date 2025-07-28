@@ -26,7 +26,7 @@ module pipilined_fp_summator import float_types_pkg::*; (
 
   logic [1:0]     num_status;
   
-  shift_reg shift_reg  #(.WIDTH(2), .STAGES(5))
+  shift_reg #( .WIDTH(2), .STAGES(5))shift_reg1
   (
     .clk_i(clk_i),
     .rst_i(rst_i),
