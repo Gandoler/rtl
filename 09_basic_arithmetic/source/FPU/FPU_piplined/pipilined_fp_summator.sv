@@ -2,11 +2,11 @@ module pipilined_fp_summator import float_types_pkg::*; (
   input logic clk_i,
   input logic rst_i,
 
-  input logic [31:0] a_i,
-  input logic [31:0] b_i,
+  input float_point_num a_i,
+  input float_point_num b_i,
   input logic vld_i,
 
-  output logic [31:0] answer_o,
+  output float_point_num answer_o,
   output logic [1:0]  num_status_o
 );
 
@@ -135,7 +135,7 @@ module pipilined_fp_summator import float_types_pkg::*; (
   end
 
 
-assign answer_o     = {answer.sign, answer.exp, answer.mant[22:0]};
+assign answer_o     = answer;
 assign num_status_o = num_status;
 
 endmodule
