@@ -3,7 +3,7 @@ module sum_stage import float_types_pkg::*;(
   input  float_point_num b_i,
 
   output logic [24:0]    res_mant_o,
-  output loigc           res_sign_o
+  output logic           res_sign_o
 
 );
 

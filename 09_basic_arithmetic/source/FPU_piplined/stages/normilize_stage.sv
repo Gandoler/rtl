@@ -16,6 +16,7 @@ module normilize_stage import float_types_pkg::*;(
     answer_normilize = '{sign : 'b0, exp : 'b0, mant : 'b0};
     mant_shift = res_mant_i;
     found_1 = 1'b0;
+    new_exp = 'b0;
     
     for(int i = 23; i >= 20; i--)begin
       if(mant_shift[i] && (!found_1)) begin
@@ -29,7 +30,7 @@ module normilize_stage import float_types_pkg::*;(
       if(found_1) begin
         answer_normilize = '{sign : res_sign_i, exp : new_exp , mant : mant_shift[21:0]};
       end else
-        answer_normilize.sign   <= 'b0;
+        answer_normilize.sign   = 'b0;
     end
   end
 

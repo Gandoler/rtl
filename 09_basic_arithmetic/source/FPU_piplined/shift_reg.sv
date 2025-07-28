@@ -1,8 +1,8 @@
 module shift_reg
-# (parameter WIDTH, STAGES)
+# (parameter WIDTH=2, STAGES=2)
 (
- input  logic               clk,
- input  logic               rst,
+ input  logic               clk_i,
+ input  logic               rst_i,
  input  logic [WIDTH - 1:0] enter,
  input  logic               en,
 
@@ -13,8 +13,8 @@ module shift_reg
 
   logic [WIDTH - 1:0] shift_reg [0 : STAGES];
 
-  always_ff @(posedge clk) begin
-    if(rst) begin
+  always_ff @(posedge clk_i) begin
+    if(rst_i) begin
       for (int i = 0; i < STAGES; i ++)
         shift_reg [i] <= 'b0;
     end else if(en)

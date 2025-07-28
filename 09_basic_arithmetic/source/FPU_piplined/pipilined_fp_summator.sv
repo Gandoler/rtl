@@ -11,7 +11,7 @@ module pipilined_fp_summator import float_types_pkg::*; (
 );
 
   float_point_num a_o, b_o;
-  logic [1:0]     ststus_o;
+  logic [1:0]     status_o;
 
   fetch_stage fetch_stage(
     .valid_i(vld_i),
@@ -20,18 +20,18 @@ module pipilined_fp_summator import float_types_pkg::*; (
 
     .a_o(a_o),
     .b_o(b_o),
-    .num_status(ststus_o)
+    .num_status(status_o)
   );
 
 
   logic [1:0]     num_status;
-  
+
   shift_reg #( .WIDTH(2), .STAGES(5))shift_reg1
   (
     .clk_i(clk_i),
     .rst_i(rst_i),
     .en(vld_i),
-    .enter(ststus_o),
+    .enter(status_o),
     .leave(num_status)
   );
 
@@ -57,7 +57,7 @@ module pipilined_fp_summator import float_types_pkg::*; (
 
 
   float_point_num a_shift, b_shift;
-  
+
   always_ff @( posedge clk_i ) begin : mant_shif_stage_block
     if(rst_i) begin
       a_shift <= '{sign : 'b0, exp : 'b0, mant : 'b0};
@@ -91,7 +91,7 @@ module pipilined_fp_summator import float_types_pkg::*; (
       a_i_exp  <= 'b0;
     end else begin
       res_mant <= res_mant_o;
-      res_sign <= res_sign;
+      res_sign <= res_sign_o;
       a_i_exp  <= a_shift.exp;
     end
    end

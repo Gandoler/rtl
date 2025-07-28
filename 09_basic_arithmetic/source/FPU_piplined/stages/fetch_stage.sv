@@ -5,7 +5,7 @@ module fetch_stage import float_types_pkg::*;(
 
   output float_point_num a_o,
   output float_point_num b_o,
-  output logic           num_status
+  output logic [1:0]     num_status
 );
 
   float_point_num a_l , b_l;
