@@ -66,7 +66,7 @@
 
  ![fetch](../../../pic/fp_sum/fetch_stage.png)
 
-  [ссылка в drawio](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&dark=auto#G1FB_OMjwa9uwDb7vLqLOIjS0Do-0mhWfe)
+  [ссылка в drawio](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&dark=auto#G1S2nMKdY1hsTfB1ZZuwkGL4u54-6SlDVt)
 
 
 ## Описание модуля Описание модуля mant_shif_stage
