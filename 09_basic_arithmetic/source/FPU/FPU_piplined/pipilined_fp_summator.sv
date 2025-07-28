@@ -135,7 +135,7 @@ module pipilined_fp_summator import float_types_pkg::*; (
   end
 
 
-assign answer_o     = answer;
+assign answer_o     = {answer.sign, answer.exp, answer.mant[22:0]};
 assign num_status_o = num_status;
 
 endmodule
