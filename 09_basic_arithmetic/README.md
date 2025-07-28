@@ -1,4 +1,4 @@
-# Fp сумматор находиться в source/FPU/FPU_piplined
+# Fp сумматор находиться в 'source/FPU/FPU_piplined'
 
 # Базовая арифметика и логика
 
