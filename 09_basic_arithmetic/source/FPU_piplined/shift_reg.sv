@@ -1,7 +1,7 @@
 module shift_reg
 # (parameter WIDTH, STAGES)
 (
- input  loigc               clk,
+ input  logic               clk,
  input  logic               rst,
  input  logic [WIDTH - 1:0] enter,
  input  logic               en,

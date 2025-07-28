@@ -3,9 +3,12 @@ module mant_shif_stage import float_types_pkg::*; (
   input  float_point_num b_i,
 
   output float_point_num a_o,
-  output float_point_num b_o,
+  output float_point_num b_o
 );
 
+  logic       larger_exp;
+  logic [7:0] exp_dif;
+  
   always_comb begin : get_exp_diff
     larger_exp = a_i.exp > b_i.exp;
     if(larger_exp)
