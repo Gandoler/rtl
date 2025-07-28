@@ -24,14 +24,15 @@ module pipiline_tb import float_types_pkg::*;;
 
     initial 
        clk = 0;
-       always #10 clk = ~clk;
+       always #5 clk = ~clk;
        initial begin
          rst = 1;
          #40;
+         rst = 0;
          vld_i =1'b1;
          a_i = '{sign : 1'b0, exp :8'b0111_1110, mant : 23'b11000000000000000000000};  //0.875
          b_i = '{sign : 1'b0, exp :8'b1000_0000, mant : 23'b00011001100110011001101};    // 2.2
-         #50;
+         #40;
          //0	10000000	10001001100110011001101 --RES
          res = '{sign : 1'b0, exp :8'b1000_0000, mant : 23'b10001001100110011001101}; // 3.075
            if (answer_o.sign == res.sign && answer_o.exp == res.exp && answer_o.mant == res.mant) begin
