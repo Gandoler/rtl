@@ -37,7 +37,7 @@
 
 
 
-## Описание модуля fetch_stage
+## Описание модуля parse_stage
 
 
   ```sv
@@ -64,7 +64,7 @@
 
 *Комментарий:* при активном `valid_i` стадия добавляет ведущий «1» к мантиссе (так как в нормализованном IEEE-754 формате мантисса записывается без ведущей единицы). Проверка особых случаев (ноль, бесконечность/NaN) производится до сложения.
 
- ![fetch](../../../pic/fp_sum/fetch_stage.png)
+ ![fetch](../../../pic/fp_sum/01_parse_stage.drawio.png)
 
   [ссылка в drawio](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&dark=auto#G1S2nMKdY1hsTfB1ZZuwkGL4u54-6SlDVt)
 
