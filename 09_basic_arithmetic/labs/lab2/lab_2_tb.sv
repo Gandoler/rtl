@@ -49,14 +49,16 @@ module lab_2_tb;
     end
   endtask
 
-
+    logic [3:0] tested_reg;
     task check_outputs_trig;
     input string msg;
     begin
-      if (out_fdce !== exp_fdce) $error("FDCE FAIL @ %0t: %s (got %b, expected %b)", $time, msg, out_fdce, exp_fdce);
-      if (out_fdpe !== exp_fdpe) $error("FDPE FAIL @ %0t: %s (got %b, expected %b)", $time, msg, out_fdpe, exp_fdpe);
-      if (out_fdre !== exp_fdre) $error("FDRE FAIL @ %0t: %s (got %b, expected %b)", $time, msg, out_fdre, exp_fdre);
-      if (out_fdse !== exp_fdse) $error("FDSE FAIL @ %0t: %s (got %b, expected %b)", $time, msg, out_fdse, exp_fdse);
+      case(tested_reg)
+      4'b0001 : if (out_fdce !== exp_fdce) $error("FDCE FAIL @ %0t: %s (got %b, expected %b)", $time, msg, out_fdce, exp_fdce);
+      4'b0010 : if (out_fdpe !== exp_fdpe) $error("FDPE FAIL @ %0t: %s (got %b, expected %b)", $time, msg, out_fdpe, exp_fdpe);
+      4'b0100 : if (out_fdre !== exp_fdre) $error("FDRE FAIL @ %0t: %s (got %b, expected %b)", $time, msg, out_fdre, exp_fdre);
+      4'b1000 : if (out_fdse !== exp_fdse) $error("FDSE FAIL @ %0t: %s (got %b, expected %b)", $time, msg, out_fdse, exp_fdse);
+      endcase
     end
   endtask
 
@@ -71,53 +73,87 @@ always #5 clk = ~clk;
     a = 4'b1100; b = 4'b0011; c = 4'b0101; #10; check_outputs();
     a = 4'b0001; b = 4'b0001; c = 4'b0001; #10; check_outputs();
 
-    $display("All test LUT AND CARRY4 cases completed.");
+    $display("All test LUT AND CARRY4 cases completed.\n\n");
 
 
     #50;
-
-
+    tested_reg = 4'b0001; //fdce
     ce = 1;
     data = 1;
-    rst = 1;
-
-
-    #2;
-    exp_fdce = 0;
-    exp_fdpe = 1;
-
-    check_outputs_trig("async reset check");
-
-    #8;
-    exp_fdre = 0;
-    exp_fdse = 1;
-    check_outputs_trig("sync reset check");
-
-    rst = 0;
-
-    data = 1;
-    @(posedge clk);
+     @(posedge clk);
+     #2
     exp_fdce = 1;
-    exp_fdpe = 1;
-    exp_fdre = 1;
-    exp_fdse = 1;
-    check_outputs_trig("data=1 load");
-
-    data = 0;
-    @(posedge clk);
+    check_outputs_trig("write to fdce");
+    rst = 1;
     exp_fdce = 0;
-    exp_fdpe = 0;
-    exp_fdre = 0;
-    exp_fdse = 0;
-    check_outputs_trig("data=0 load");
+    #1
+    check_outputs_trig("reset fdce");
 
-    ce = 0;
+
+
+
+
+    tested_reg = 4'b0010; //fdpe
+    ce = 1;
     data = 1;
-    data = 1;
+    exp_fdpe = 1;
+    #1
+    check_outputs_trig("write one to fdpe");
+    ce = 1;
+    data = 0;
+    rst = 0;
     @(posedge clk);
-    check_outputs_trig("CE=0 hold check");
+    exp_fdpe = 0;
+    #2
+    check_outputs_trig("write zero to fdpe");
+    rst = 1;
+    exp_fdpe = 1;
+    #1
+    check_outputs_trig("PRE fdpe");
 
-    $display("Test completed.");
+
+
+
+    tested_reg = 4'b0100; //fdre
+    ce = 1;
+    data = 1;
+    rst = 0;
+    @(posedge clk);
+    exp_fdre = 1;
+    #1
+    check_outputs_trig("write one to fdre");
+    rst = 1;
+    ce = 1;
+    @(posedge clk);
+    exp_fdre = 0;
+    #1
+    check_outputs_trig("reset fdre");
+
+
+
+    tested_reg = 4'b1000; //fdse
+    ce = 1;
+    data = 1;
+    rst = 0;
+    @(posedge clk);
+    exp_fdse = 1;
+    #1
+    check_outputs_trig("write one to fdse");
+      ce = 1;
+    data = 0;
+    rst = 0;
+    @(posedge clk);
+    exp_fdse = 0;
+    #1
+    check_outputs_trig("write zero to fdse");
+    rst = 1;
+    @(posedge clk);
+    exp_fdse = 1;
+    #1
+    check_outputs_trig("set fdse");
+
+    $display("All test regs cases completed.\n\n");
+
     $finish;
 
     $stop;
