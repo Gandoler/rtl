@@ -1,6 +1,6 @@
 module fifo_dualport #(
   parameter WIDTH  = 8,
-  parameter DEPTH  = 8,
+  parameter DEPTH  = 8
 )(
   input  logic              clk_i,
   input  logic              rst_i,
@@ -36,20 +36,19 @@ module fifo_dualport #(
   .WIDTH (WIDTH),
   .DEPTH (DEPTH),
   .ADDR_W(pointer_width)
-  )(
+  ) sram_sd1(
   .clk_i(clk_i),
   .wen_i(wen),
   .ren_i(ren),
   .waddr_i(wr_ptr),
   .raddr_i(rd_ptr),
   .data_i(data_i),
-
   .data_o(sram_out)
   );
 
-  always_ff @ (posedge clk_i) : for_wr_ptr
+  always_ff @ (posedge clk_i) begin : for_wr_ptr
     if (rst_i) begin
-      wr_ptr <= '0;
+      wr_ptr <= 'b0;
       wr_circle_odd <= 1'b0;
     end
     else if (push) begin
@@ -62,8 +61,9 @@ module fifo_dualport #(
         wr_ptr <= wr_ptr + 1'b1;
       end
     end
+  end
 
-  always_ff @ (posedge clk_i) : for_read_ptr
+  always_ff @ (posedge clk_i) begin : for_read_ptr
     if (rst_i) begin
       rd_ptr <= '0;
       rd_circle_odd <= 1'b0;
@@ -78,6 +78,7 @@ module fifo_dualport #(
         rd_ptr <= rd_ptr + 1'b1;
       end
     end
+  end
 
 
 
@@ -89,7 +90,7 @@ module fifo_dualport #(
 
   always_comb begin
     equal_ptrs  = wr_ptr == rd_ptr;
-    same_circle = wr_circle_odd == rd_circle_odd
+    same_circle = wr_circle_odd == rd_circle_odd;
     empty       = equal_ptrs && same_circle;
     full        = equal_ptrs && ~same_circle;
     wen         = push && !full;
