@@ -9,7 +9,7 @@ module sram_sd #(
   input  logic [ADDR_W-1:0] waddr_i,
   input  logic [ADDR_W-1:0] raddr_i,
   input  logic [WIDTH-1:0]  data_i,
-  output loigc [WIDTH-1:0]  data_o
+  output logic [WIDTH-1:0]  data_o
 );
 
   logic [WIDTH-1:0] SRAM [DEPTH-1:0];
@@ -26,3 +26,5 @@ module sram_sd #(
     if(ren_i)
       data_o <= SRAM[raddr_i];
   end
+
+endmodule
