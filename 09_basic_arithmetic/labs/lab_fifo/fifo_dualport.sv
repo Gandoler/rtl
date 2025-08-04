@@ -68,7 +68,7 @@ module fifo_dualport #(
       rd_ptr <= '0;
       rd_circle_odd <= 1'b0;
     end
-    else if (push) begin
+    else if (pop) begin
       if (rd_ptr == max_ptr)
       begin
         rd_ptr <= '0;
@@ -97,8 +97,21 @@ module fifo_dualport #(
     ren         = pop  && !empty;
   end
 
+  logic ready, valid;
+
+  always_ff @(posedge clk_i) begin
+    if(rst_i) begin
+      ready <= 1'b0;
+      valid <= 1'b0;
+    end else begin
+      ready <= full? (1'b0):(1'b1);
+      valid <= empty? (1'b0):(1'b1);
+    end
+
+  end
+
   assign data_o = sram_out;
-  assign ready_o = full? (1'b0):(1'b1);
-  assign valid_o = empty? (1'b0):(1'b1);
+  assign ready_o = ready;
+  assign valid_o = valid;
 
 endmodule

@@ -52,26 +52,30 @@ initial
     valid_i = 'b0;
     ready_i = 'b0;
     data_i  = 'b0;
-
+    @(posedge clk_i);
 
     $display("[TEST] Simple push/pop");
     do_push(push_data_array[0]);
-    do_pop(push_data_array[0]);
+    do_pop();
      if ( data_o !== push_data_array[0])
        $error("Mismatch: expected %0d, got %0d", push_data_array[0], data_o);
-//    do_pop();
-//    if (int i !== push_data_array[0])
-//      $error("Mismatch: expected %0d, got %0d", push_data_array[0], i);
+     else
+       $display("Simple push/pop completed");
 
-//    $display("[TEST] Fill until full");
-//    for (int i = 0; i < DEPTH; i++) begin
-//      do_push(push_data_array[i]);
-//    end
-//    if (!ready_o)
-//      $error("FIFO should be full: ready_o is low");
-//    do_push('hFF);
-//    if (ready_o)
-//      $error("FIFO accepted data when full");
+
+
+    $display("[TEST] Fill until full");
+    for (int i = 0; i < DEPTH; i++) begin
+      do_push(push_data_array[i]);
+
+    end
+    if (!ready_o)
+      $error("FIFO should be full: ready_o is low");
+    do_push('hFF);
+    if (ready_o)
+      $error("FIFO accepted data when full");
+     else
+       $display("Fill until full completed");
 
 //    $display("[TEST] Drain FIFO");
 //    for (int i = 0; i < DEPTH; i++) begin
@@ -104,7 +108,7 @@ task automatic do_push(input [WIDTH-1:0] val);
     begin
       @(posedge clk_i);
       valid_i <= 1;
-      data_i  <= val;
+      data_i  = val;
 
       wait (ready_o == 1);
       @(posedge clk_i);
@@ -113,13 +117,13 @@ task automatic do_push(input [WIDTH-1:0] val);
   endtask
 
 
-  task automatic do_pop(output [WIDTH-1:0] val);
+  task automatic do_pop();
     begin
       @(posedge clk_i);
       ready_i <= 1;
       wait (valid_o == 1);
       @(posedge clk_i);
-      val     = data_o;
+      @(posedge clk_i); // Got a D for a crutch
       ready_i <= 0;
     end
   endtask

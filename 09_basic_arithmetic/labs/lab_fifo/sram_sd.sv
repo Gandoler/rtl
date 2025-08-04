@@ -14,7 +14,6 @@ module sram_sd #(
 
   logic [WIDTH-1:0] SRAM [DEPTH-1:0];
 
-
   always @(posedge clk_i) begin
     if(wen_i)
       SRAM[waddr_i] <= data_i;
