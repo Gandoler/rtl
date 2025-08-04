@@ -91,19 +91,9 @@ initial
     else 
        $display("Drain FIFO completed");
 
-//    $display("[TEST] Wrap-around behavior");
-//    for (int i = 0; i < DEPTH/2; i++) do_push(push_data_array[i]);
-//    for (int i = 0; i < DEPTH/4; i++) do_pop(data_i);
-//    for (int i = DEPTH/2; i < DEPTH/2 + DEPTH/2; i++) do_push(push_data_array[i]);
-//    while (valid_o) begin
-//      do_pop(data_i);
-//    end
+    $display("[TEST] All tests completed");
+    $finish;
 
-//    $display("[TEST] All tests completed");
-//    $finish;
-
-//    $dumpfile("tb_fifo_dualport.vcd");
-//    $dumpvars(0, tb_fifo_dualport);
   end
 
 
