@@ -39,3 +39,29 @@ lint_clean:
 
 
 ## Интересные моменты полученные от линтера
+
+1. первый запуск
+
+и сразу получаю фаталл
+
+![](./pic/strange_fatal.png)
+
+```bash
+STX_VE_606   Syntax     /home/glebFrolov/sg_test/rtl/fifo/fifo_dualport.sv   60     Identifier ( full ) not declared in current scope
+STX_VE_606   Syntax     /home/glebFrolov/sg_test/rtl/fifo/fifo_dualport.sv   77     Identifier ( empty ) not declared in current scope
+run_goal: info: updating spyglass.log with goal summary
+
+```
+
+
+думаю это из-за того, что я объявил после первого использования эти logic
+
+## исправил - теперь все круто
+
+
+```bash
+Goal Violation Summary:
+Reported Messages: 0 Fatals, 0 Errors, 0 Warnings, 2 Infos
+```
+
+![](./pic/all_good.png)
