@@ -77,15 +77,19 @@ initial
      else
        $display("Fill until full completed");
 
-//    $display("[TEST] Drain FIFO");
-//    for (int i = 0; i < DEPTH; i++) begin
-//      do_pop(data_i);
-//      if (data_i !== push_data_array[i])
-//        $error("Error at pop %0d: expected %0d, got %0d", i, push_data_array[i], data_i);
-//    end
-//    @(posedge clk_i);
-//    if (valid_o)
-//      $error("FIFO valid asserted when empty");
+
+
+    $display("[TEST] Drain FIFO");
+    for (int i = 0; i < DEPTH; i++) begin
+      do_pop();
+      if (data_o !== push_data_array[i])
+        $error("Error at pop %0d: expected %0d, got %0d", i, push_data_array[i], data_o);
+    end
+    @(posedge clk_i);
+    if (valid_o)
+      $error("FIFO valid asserted when empty");
+    else 
+       $display("Drain FIFO completed");
 
 //    $display("[TEST] Wrap-around behavior");
 //    for (int i = 0; i < DEPTH/2; i++) do_push(push_data_array[i]);
@@ -123,8 +127,9 @@ task automatic do_push(input [WIDTH-1:0] val);
       ready_i <= 1;
       wait (valid_o == 1);
       @(posedge clk_i);
+       ready_i <= 0;
       @(posedge clk_i); // Got a D for a crutch
-      ready_i <= 0;
+     
     end
   endtask
 

@@ -57,7 +57,7 @@ module fifo_dualport #(
         wr_ptr <= '0;
         wr_circle_odd <= ~ wr_circle_odd;
       end
-      else begin
+      else if (!full) begin
         wr_ptr <= wr_ptr + 1'b1;
       end
     end
@@ -74,7 +74,7 @@ module fifo_dualport #(
         rd_ptr <= '0;
         rd_circle_odd <= ~ rd_circle_odd;
       end
-      else begin
+      else if(! empty) begin
         rd_ptr <= rd_ptr + 1'b1;
       end
     end
