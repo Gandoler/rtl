@@ -5,9 +5,8 @@
 ![example scheme](../../pic/ex_scheme_FIFO.png)
 
 
+
+
+**схема моей реализаци FIFO**
+
 ![схема реализации](../../pic/my_fifo_scheme.drawio.png)
-
-
-## ситуации когда мне интересен bypas:
-
-1) когда FIFO- пустая и просто прямиком прокидывать
