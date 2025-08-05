@@ -126,7 +126,7 @@
 ![Alt-текст](https://gitlab.example.com/logo.png)
 ```
 
-! [недуступная картинка](https://gitlab.example.com/logo.png)
+![недуступная картинка](./githublogo.png)
 
 ---
 
