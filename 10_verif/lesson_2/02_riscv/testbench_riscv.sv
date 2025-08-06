@@ -56,10 +56,11 @@ module testbench_riscv;
     // Не забудьте про ожидание сигнала сброса!
     initial begin
       wait(aresetn);
-
+    for(int i = 0; i < 100; i++) begin 
       @(posedge clk)
       instr <= $urandom();
-
+    end
+    
     end
 
     // Пользуйтесь этой структурой

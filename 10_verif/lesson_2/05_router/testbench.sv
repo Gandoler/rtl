@@ -22,30 +22,34 @@ module testbench;
 
     // TODO:
     // Определите период тактового сигнала
-    parameter CLK_PERIOD = // ?;
+    parameter CLK_PERIOD = 10;// ?;
 
     // TODO:
     // Cгенерируйте тактовый сигнал
     initial begin
         clk <= 0;
         forever begin
-
+          #(CLK_PERIOD/2) clk <= ~clk;
         end
     end
-    
+
     // TODO:
     // Cгенерируйте сигнал сброса
     initial begin
-
+      aresetn <= 0;
+      #(CLK_PERIOD);
+      aresetn <= 1;
     end
 
     // TODO:
     // Сгенерируйте входные сигналы
     // Не забудьте про ожидание сигнала сброса!
     initial begin
-        // Входные воздействия опишите здесь.
-        @(posedge clk);
-        $stop();
+      // Входные воздействия опишите здесь.
+      wait(aresetn);
+      @(posedge clk);
+        in <=
+      $stop();
     end
 
     // Пользуйтесь этой структурой
