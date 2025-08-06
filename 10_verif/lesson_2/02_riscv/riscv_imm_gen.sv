@@ -20,7 +20,7 @@ module riscv_imm_gen (
     assign b_imm_w = { { ( 20 ){ instr[31] } }, instr[7], instr[30:25], instr[11:8],  1'b0 };
 
 
-     assign s_imm_w = { { ( 21 ){ instr[31] } }, instr[30:25], instr[11:8],  instr[7] };
+     assign s_imm_w = { { ( 20 ){ instr[31] } }, instr[30:25], instr[11:8],  instr[7] };
 
 
     // assign u_imm_w = { instr[31:12], { ( 11 ){ 1'b0 } } };
