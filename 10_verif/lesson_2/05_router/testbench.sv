@@ -4,8 +4,10 @@ module testbench;
     logic clk;
     logic aresetn;
 
+    logic       [3:0] expected_out;
+
     // Остальные сигналы
-    logic  [3:0][1:0] sel;
+    logic       [1:0] sel  [0:3];
     logic       [3:0] in;
     logic       [3:0] out;
 
@@ -47,14 +49,19 @@ module testbench;
     initial begin
       // Входные воздействия опишите здесь.
       wait(aresetn);
-      @(posedge clk);
-        in <=
+      for(int i = 0; i < 100; i++) begin
+        @(posedge clk);
+        in <= $urandom();
+        for(int j = 0; j < 4; j++) begin
+          sel[j] <= $urandom();
+        end
+      end
       $stop();
     end
 
     // Пользуйтесь этой структурой
     typedef struct {
-        logic  [3:0][1:0] sel;
+        logic       [1:0] sel [0:3];
         logic       [3:0] in;
         logic       [3:0] out;
     } packet;
@@ -69,23 +76,31 @@ module testbench;
         wait(aresetn);
         forever begin
             @(posedge clk);
-            // Пишите здесь.
+            pkt.sel = sel;
+            pkt.in  = in;
+            pkt.out = out;
+            mon2chk.put(pkt);
         end
     end
 
-    // TODO:
-    // Выполните проверку выходных сигналов
+
     initial begin
         packet pkt_prev, pkt_cur;
         wait(aresetn);
         mon2chk.get(pkt_prev);
         forever begin
             mon2chk.get(pkt_cur);
-
             // Пишите здесь
+            expected_out ='b0;
+            for(int i = 4; i > 0; i--)begin
+              expected_out[pkt_prev.sel[i]] = pkt_prev.in[i];
+            end
 
+            if (pkt_cur.out != expected_out)
+             $error("error in route");
             pkt_prev = pkt_cur;
         end
     end
+
 
 endmodule

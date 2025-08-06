@@ -1,11 +1,44 @@
-module router (
+module router  (
     input  logic             clk,
     input  logic             aresetn,
-    input  logic  [3:0][1:0] sel,
+    input  logic [1:0] sel  [0:3],
     input  logic       [3:0] in,
     output logic       [3:0] out
 ); 
+ logic       [3:0] out_l;
 
+ always_ff@(posedge clk or aresetn) begin
+  if(aresetn) 
+    out_l <='b0;
+  else begin
+    case(sel[3])
+      0 : out_l[0] <= in[0];
+      1 : out_l[1] <= in[1];
+      2 : out_l[2] <= in[2];
+      3 : out_l[3] <= in[3];
+    endcase
+    case(sel[2])
+      0 : out_l[0] <= in[0];
+      1 : out_l[1] <= in[1];
+      2 : out_l[2] <= in[2];
+      3 : out_l[3] <= in[3];
+    endcase
+    case(sel[1])
+      0 : out_l[0] <= in[0];
+      1 : out_l[1] <= in[1];
+      2 : out_l[2] <= in[2];
+      3 : out_l[3] <= in[3];
+    endcase
+    case(sel[0])
+      0 : out_l[0] <= in[0];
+      1 : out_l[1] <= in[1];
+      2 : out_l[2] <= in[2];
+      3 : out_l[3] <= in[3];
+    endcase
+  end
+ end
+
+ assign out = out_l;
 /*
     Описание работы устройства.
 
@@ -18,7 +51,7 @@ module router (
             |                |                |                |
           in[0]            in[1]            in[2]            in[3]
 
-    �?ными словами, вход ~in[n]~ отправлется на такой выход ~out[m]~,
+    �?ными словами, вход ~in[n]~ отправлется на такой выход ~out[m]~,
     который указан в управляющем сигнале ~sel[n]~. Возникает нюанс
     с приоретизацией. Если ~sel[n]~ и ~sel[m]~ равны одинаковому
     номеру выхода, то на сответствующий выход отправляется вход
