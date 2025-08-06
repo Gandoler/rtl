@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module testbench_riscv;
+module testbench;
 
     logic        clk;
     logic [31:0] A;
