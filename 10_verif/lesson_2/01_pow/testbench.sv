@@ -36,13 +36,12 @@ module testbench;
     initial begin
 
         logic [31:0] A_tmp;
-
         // TODO:
         // Сгенерируйте несколько чисел в интервале от 0 до 25.
         // �?спользуйте цикл + @(posedge clk).
         for(int i = 0; i < 26; i++) begin
-          @(posedge clk);
           A <= i;
+          @(posedge clk);
         end
 
 
@@ -67,7 +66,7 @@ module testbench;
         // условие деления на 3 без остатка: <число> % 3 == 0.
         for(int i = 0; i < 26; i++) begin
           do begin
-            rand_val <= $urandom_range(3, 33);
+            rand_val = $urandom_range(3, 33);
           end
           while(!(rand_val % 3 == 0));
           @(posedge clk);
