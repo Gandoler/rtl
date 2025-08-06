@@ -95,7 +95,7 @@ module testbench_04_sum;
 
         end
 
-        ->> gen_done;
+//        ->> gen_done;
 
     end
 

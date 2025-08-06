@@ -1,4 +1,4 @@
-module sum (
+module sum_04 (
     input  logic       clk,
     input  logic       aresetn,
     input  logic [31:0] a,

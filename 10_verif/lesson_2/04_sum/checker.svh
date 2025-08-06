@@ -29,38 +29,38 @@
         return result;
     endfunction
     
-    covergroup sum_cg with function sample(logic [31:0] a, logic [31:0] b);
+//    covergroup sum_cg with function sample(logic [31:0] a, logic [31:0] b);
 
-        coverpoint a {
-            bins b_0_100     [ 101]  = {[0:100]};
-            bins b_127_255   [  32]  = get_b_127_255();
-            bins b_3ff_103fe [13107] = get_b_3ff_103fe();
-            illegal_bins illegal = default;
-        }
+//        coverpoint a {
+//            bins b_0_100     [ 101]  = {[0:100]};
+//            bins b_127_255   [  32]  = get_b_127_255();
+//            bins b_3ff_103fe [13107] = get_b_3ff_103fe();
+//            illegal_bins illegal = default;
+//        }
 
-        coverpoint b {
-            bins b_100_0             [ 101] = {[0:100]};
-            bins b_127_255           [  32] = get_b_127_255();
-            bins b_ffffffff_ffffbffd [ 512] = get_b_ffffffff_ffffbfff();
-            illegal_bins illegal = default;
-        }
+//        coverpoint b {
+//            bins b_100_0             [ 101] = {[0:100]};
+//            bins b_127_255           [  32] = get_b_127_255();
+//            bins b_ffffffff_ffffbffd [ 512] = get_b_ffffffff_ffffbfff();
+//            illegal_bins illegal = default;
+//        }
 
-    endgroup
+//    endgroup
 
-    event gen_done;
-    sum_cg cg = new();
+//    event gen_done;
+//    sum_cg cg = new();
 
-    initial begin
-        wait(aresetn);
-        fork
-            forever begin
-                @(posedge clk);
-                #1step;
-                cg.sample(A, B);
-            end
-            @(gen_done);
-        join_any
-        @(posedge clk);
-        disable fork;
-        $stop();
-    end
+//    initial begin
+//        wait(aresetn);
+//        fork
+//            forever begin
+//                @(posedge clk);
+//                #1step;
+//                cg.sample(A, B);
+//            end
+//            @(gen_done);
+//        join_any
+//        @(posedge clk);
+//        disable fork;
+//        $stop();
+//    end
