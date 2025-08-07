@@ -17,16 +17,16 @@
 3.  сверяем их
 4.  получаем такие ошибки (небольшая вырезка из которой видно, что ошибка в модуле парса везде кроме i - константы) и главное видно что перепутаны S и  B
 
-    ```tcl
-   Time: 45 ns  Iteration: 1  Process: /testbench_riscv/Initial99_6  Scope: testbench_riscv.Block99_7  File: C:/Users/glkru/internship2/Internship/10_verif/lesson_2/02_riscv/testbench_riscv.sv Line: 120
-   Error: Bad B-imm extraction: got 1115 (0000045b), exp 3162 (00000c5a)
-   Time: 45 ns  Iteration: 1  Process: /testbench_riscv/Initial99_6  Scope: testbench_riscv.Block99_7  File: C:/Users/glkru/internship2/Internship/10_verif/lesson_2/02_riscv/testbench_riscv.sv Line: 126
-   Error: Bad U-imm extraction: got 581853184 (22ae6000), exp 1163706368 (455cc000)
-   Time: 45 ns  Iteration: 1  Process: /testbench_riscv/Initial99_6  Scope: testbench_riscv.Block99_7  File: C:/Users/glkru/internship2/Internship/10_verif/lesson_2/02_riscv/testbench_riscv.sv Line: 132
-   Error: Bad J-imm extraction: got 13108 (00003334), exp 838740 (000ccc54)
-   Time: 45 ns  Iteration: 1  Process: /testbench_riscv/Initial99_6  Scope: testbench_riscv.Block99_7  File: C:/Users/glkru/internship2/Internship/10_verif/lesson_2/02_riscv/testbench_riscv.sv Line: 138
-   Error: Bad S-imm extraction: got 3162 (00000c5a), exp 1115 (0000045b)
-    ```
+  ```tcl
+  Time: 45 ns  Iteration: 1  Process: /testbench_riscv/Initial99_6  Scope: testbench_riscv.Block99_7  File: C:/Users/glkru/internship2/Internship/10_verif/lesson_2/02_riscv/testbench_riscv.sv Line: 120
+  Error: Bad B-imm extraction: got 1115 (0000045b), exp 3162 (00000c5a)
+  Time: 45 ns  Iteration: 1  Process: /testbench_riscv/Initial99_6  Scope: testbench_riscv.Block99_7  File: C:/Users/glkru/internship2/Internship/10_verif/lesson_2/02_riscv/testbench_riscv.sv Line: 126
+  Error: Bad U-imm extraction: got 581853184 (22ae6000), exp 1163706368 (455cc000)
+  Time: 45 ns  Iteration: 1  Process: /testbench_riscv/Initial99_6  Scope: testbench_riscv.Block99_7  File: C:/Users/glkru/internship2/Internship/10_verif/lesson_2/02_riscv/testbench_riscv.sv Line: 132
+  Error: Bad J-imm extraction: got 13108 (00003334), exp 838740 (000ccc54)
+  Time: 45 ns  Iteration: 1  Process: /testbench_riscv/Initial99_6  Scope: testbench_riscv.Block99_7  File: C:/Users/glkru/internship2/Internship/10_verif/lesson_2/02_riscv/testbench_riscv.sv Line: 138
+  Error: Bad S-imm extraction: got 3162 (00000c5a), exp 1115 (0000045b)
+  ```
 5. меняем в парсере s и  b местами и теперь ошибки только у j и u
 
 У этих двух строк в парсере ошибка:

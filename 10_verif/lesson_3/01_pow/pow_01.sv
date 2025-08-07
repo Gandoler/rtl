@@ -1,4 +1,4 @@
-module 01_pow (
+module pow_01 (
 
     input logic        clk,
     input logic        aresetn,
@@ -36,10 +36,10 @@ module 01_pow (
             tdata_ff     [0] <= s_tdata;
             tdata_tmp_ff [0] <= s_tdata;
             tid_ff       [0] <= s_tid;
-            for(int i = 1; i < 4; i++) begin
+            for(int i = 0; i < 4; i++) begin
                 tdata_tmp_ff [i] <= tdata_tmp_ff[i-1];
             end
-            for(int i = 1; i < 5; i++) begin
+            for(int i = 0; i < 5; i++) begin
                 tvalid_ff    [i] <= tvalid_ff [i-1];
                 tdata_ff     [i] <= tdata_ff  [i-1] * tdata_tmp_ff  [i-1];
                 tid_ff       [i] <= tid_ff [i-1];

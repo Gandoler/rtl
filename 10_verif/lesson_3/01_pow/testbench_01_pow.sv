@@ -19,7 +19,7 @@ module testbench_01_pow;
 
 
     // Модуль для тестирования
-    pow DUT(
+    pow_01 DUT(
         .clk      ( clk       ),
         .aresetn  ( aresetn   ),
         .s_tvalid ( s_tvalid  ),
@@ -128,7 +128,7 @@ module testbench_01_pow;
 
     // TODO:
     // Реализуйте проверки
-    // Используйте форматирование при выводе ошибок
+    // �?спользуйте форматирование при выводе ошибок
     // Например:
     //
     // $error("Invalid data: Real: %h, Expected: %h",
@@ -139,8 +139,14 @@ module testbench_01_pow;
         forever begin
             in_mbx.get(in_p);
             out_mbx.get(out_p);
-            // Пишите здесь.
-
+              if( in_p.tid !== out_p.tid ) begin
+                $error("Invalid TID: Real: %h, Expected: %h",
+                    out_p.tid, in_p.tid);
+            end
+            if( out_p.tdata !== in_p.tdata ** 5 ) begin
+                $error("Invalid TDATA: Real: %0d, Expected: %0d ^ 5 = %0d\n",
+                    out_p.tdata, in_p.tdata, in_p.tdata ** 5);
+            end
         end
     end
 
