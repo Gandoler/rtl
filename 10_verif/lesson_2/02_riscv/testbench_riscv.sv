@@ -56,11 +56,11 @@ module testbench_riscv;
     // Не забудьте про ожидание сигнала сброса!
     initial begin
       wait(aresetn);
-    for(int i = 0; i < 100; i++) begin 
+    for(int i = 0; i < 100; i++) begin
       @(posedge clk)
       instr <= $urandom();
     end
-    
+
     end
 
     // Пользуйтесь этой структурой
@@ -111,31 +111,31 @@ module testbench_riscv;
         exp_u_imm = {{pkt_prev.instr[31]}, pkt_prev.instr[30:12], 12'h000};
         exp_j_imm = {{11{pkt_prev.instr[31]}}, pkt_prev.instr[19:12], pkt_prev.instr[20], pkt_prev.instr[30:21],1'b0};
 
-        if (pkt_cur.i_imm !== {{20{pkt_prev.instr[31]}}, pkt_prev.instr[30:20]}) begin
+        if (pkt_cur.i_imm != exp_i_imm) begin
             $error("Bad I-imm extraction: got %0d (%h), exp %0d (%h)",
                    pkt_cur.i_imm, pkt_cur.i_imm,
                    exp_i_imm,        exp_i_imm);
         end
 
-        if (pkt_cur.s_imm !== {{20{pkt_prev.instr[31]}}, pkt_prev.instr[30:25], pkt_prev.instr[11:7]}) begin
+        if (pkt_cur.s_imm != exp_s_imm) begin
             $error("Bad S-imm extraction: got %0d (%h), exp %0d (%h)",
                    pkt_cur.s_imm, pkt_cur.s_imm,
                    exp_s_imm,        exp_s_imm);
         end
 
-        if (pkt_cur.b_imm !== {{20{pkt_prev.instr[31]}}, pkt_prev.instr[7], pkt_prev.instr[30:25], pkt_prev.instr[11:8], 1'b0}) begin
+        if (pkt_cur.b_imm != exp_b_imm) begin
             $error("Bad B-imm extraction: got %0d (%h), exp %0d (%h)",
                    pkt_cur.b_imm, pkt_cur.b_imm,
                    exp_b_imm,        exp_b_imm);
         end
 
-        if (pkt_cur.u_imm !== {{pkt_prev.instr[31]}, pkt_prev.instr[30:12], 12'h000}) begin
+        if (pkt_cur.u_imm != exp_u_imm) begin
             $error("Bad U-imm extraction: got %0d (%h), exp %0d (%h)",
                    pkt_cur.u_imm, pkt_cur.u_imm,
                    exp_u_imm,        exp_u_imm);
         end
 
-        if (pkt_cur.j_imm !== exp_j_imm) begin
+        if (pkt_cur.j_imm != exp_j_imm) begin
             $error("Bad J-imm extraction: got %0d (%h), exp %0d (%h)",
                    pkt_cur.j_imm, pkt_cur.j_imm,
                    exp_j_imm,        exp_j_imm);

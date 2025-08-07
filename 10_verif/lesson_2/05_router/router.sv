@@ -7,37 +7,21 @@ module router  (
 ); 
  logic       [3:0] out_l;
 
- always_ff@(posedge clk or aresetn) begin
-  if(aresetn) 
-    out_l <='b0;
-  else begin
-    case(sel[3])
-      0 : out_l[0] <= in[0];
-      1 : out_l[1] <= in[1];
-      2 : out_l[2] <= in[2];
-      3 : out_l[3] <= in[3];
-    endcase
-    case(sel[2])
-      0 : out_l[0] <= in[0];
-      1 : out_l[1] <= in[1];
-      2 : out_l[2] <= in[2];
-      3 : out_l[3] <= in[3];
-    endcase
-    case(sel[1])
-      0 : out_l[0] <= in[0];
-      1 : out_l[1] <= in[1];
-      2 : out_l[2] <= in[2];
-      3 : out_l[3] <= in[3];
-    endcase
-    case(sel[0])
-      0 : out_l[0] <= in[0];
-      1 : out_l[1] <= in[1];
-      2 : out_l[2] <= in[2];
-      3 : out_l[3] <= in[3];
-    endcase
-  end
- end
+  always_ff @(posedge clk or negedge aresetn) begin
+        if (!aresetn) begin
+            out_l <= 4'b0000;
+        end else begin
+            out_l <= 4'b0000;
 
+            for (int i = 0; i < 4; i++) begin
+                if (sel[i] == 2'd0 && out_l[0] == 1'b0) out_l[0] <= in[i];
+                else if (sel[i] == 2'd1 && out_l[1] == 1'b0) out_l[1] <= in[i];
+                else if (sel[i] == 2'd2 && out_l[2] == 1'b0) out_l[2] <= in[i];
+                else if (sel[i] == 2'd3 && out_l[3] == 1'b0) out_l[3] <= in[i];
+            end
+        end
+    end
+    
  assign out = out_l;
 /*
     Описание работы устройства.
@@ -80,19 +64,19 @@ module router  (
     и так далее до out[3].
 */
 
-`protected
-    MTI!#!}^E^{Cis)DM?so-y#j=C2so,sI57$r?asI>[8Q-bqLIkEuCK,i$>]K3H7CI=o2%KRpA~js
-    J]Vm@e;;zVX~G%+'n]HwU$HDXK[5Op|h3w]s]C{RGI2IrATpm<$\B,-,I7(\Ys$5&u{=_kNF\:;$
-    eB!sIE*jK17x_~}o{,EVvI*CJ[=?${OOx{[?Qih^B@<ERGX:El$DN%>_AO!OE3QGulYu=r_-[[{{
-    7?-52TA11>x5B37~5j=+7w_*sGGUe[j5O3\!pX1_i=Y-Y3+5s_q-+xOBC?]@$wU>';a*D3~[^^#U
-    I!Y=;_J$~}>BH^XE5#I7=,;~Ae}Y;{aA7v#mn$\L"a+3Q1ACs|s-_}?=eG_tjim^\u-A|BmZm=WG
-    U{=?RxV~n1iaOre={]+}mg><-[wTY]G@}k=+l5]<([s^AemTl'O7R]s?;^r'[53H=<OKRB3^'.Ko
-    ]G{$R?;=VT}#5@2U<-N~9l<fGLR@D>fpf$#Cu7^@WK-CaQXQw}l?;-^$u*lK-5ArJ2a=oIoWQC3G
-    uOroWT+BZH-3u(,\m=D@;C4Bk5WIBQ$;=B~*'jUBQ6JaJ%v&Tnn2D<n7Kr3@]keT,*UuCr^iBB>I
-    $XmGKR;Il'5+!{\}*wn5^KGp_o??mTvGB}nv+'-ViBIK[^xzQDr_OJp'DV*OrAZpI~WQ!-~CGmAV
-    \u,{UXDnzV@$~1<v'Wrk=WlZY"vio[O}Dr*_W;^QHlIGTUNT*$Qv!-T%q2-rvi^\n*P2=UAK>ZUn
-    xI'OQ$a:*1l1[CxQTHU<@zWRDYH#,@j_fvGI[f{'Wx5O!$YX-?=\\eapDn_jHUsBdx7_!.0klATu
-    YT<Yu*A2_j$%]TGH'JKT@AR#THRYcWRu'z1DCxX{Q,s#*2_D[Y\sid^YOCqx\EIC3x{}=-[8zD?v
-    [a'Q
-`endprotected
+//`protected
+//    MTI!#!}^E^{Cis)DM?so-y#j=C2so,sI57$r?asI>[8Q-bqLIkEuCK,i$>]K3H7CI=o2%KRpA~js
+//    J]Vm@e;;zVX~G%+'n]HwU$HDXK[5Op|h3w]s]C{RGI2IrATpm<$\B,-,I7(\Ys$5&u{=_kNF\:;$
+//    eB!sIE*jK17x_~}o{,EVvI*CJ[=?${OOx{[?Qih^B@<ERGX:El$DN%>_AO!OE3QGulYu=r_-[[{{
+//    7?-52TA11>x5B37~5j=+7w_*sGGUe[j5O3\!pX1_i=Y-Y3+5s_q-+xOBC?]@$wU>';a*D3~[^^#U
+//    I!Y=;_J$~}>BH^XE5#I7=,;~Ae}Y;{aA7v#mn$\L"a+3Q1ACs|s-_}?=eG_tjim^\u-A|BmZm=WG
+//    U{=?RxV~n1iaOre={]+}mg><-[wTY]G@}k=+l5]<([s^AemTl'O7R]s?;^r'[53H=<OKRB3^'.Ko
+//    ]G{$R?;=VT}#5@2U<-N~9l<fGLR@D>fpf$#Cu7^@WK-CaQXQw}l?;-^$u*lK-5ArJ2a=oIoWQC3G
+//    uOroWT+BZH-3u(,\m=D@;C4Bk5WIBQ$;=B~*'jUBQ6JaJ%v&Tnn2D<n7Kr3@]keT,*UuCr^iBB>I
+//    $XmGKR;Il'5+!{\}*wn5^KGp_o??mTvGB}nv+'-ViBIK[^xzQDr_OJp'DV*OrAZpI~WQ!-~CGmAV
+//    \u,{UXDnzV@$~1<v'Wrk=WlZY"vio[O}Dr*_W;^QHlIGTUNT*$Qv!-T%q2-rvi^\n*P2=UAK>ZUn
+//    xI'OQ$a:*1l1[CxQTHU<@zWRDYH#,@j_fvGI[f{'Wx5O!$YX-?=\\eapDn_jHUsBdx7_!.0klATu
+//    YT<Yu*A2_j$%]TGH'JKT@AR#THRYcWRu'z1DCxX{Q,s#*2_D[Y\sid^YOCqx\EIC3x{}=-[8zD?v
+//    [a'Q
+//`endprotected
 endmodule

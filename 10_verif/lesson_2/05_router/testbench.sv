@@ -92,12 +92,15 @@ module testbench;
             mon2chk.get(pkt_cur);
             // Пишите здесь
             expected_out ='b0;
-            for(int i = 4; i > 0; i--)begin
-              expected_out[pkt_prev.sel[i]] = pkt_prev.in[i];
+            for(int i = 0; i < 4; i++)begin
+              if(expected_out[pkt_prev.sel[i]] =='b0)
+                expected_out[pkt_prev.sel[i]] = pkt_prev.in[i];
             end
 
-            if (pkt_cur.out != expected_out)
+            if (pkt_cur.out !== expected_out) begin
+             $display("DIFF: expected_out = %b, pkt_cur.out = %b", expected_out, pkt_cur.out);
              $error("error in route");
+            end
             pkt_prev = pkt_cur;
         end
     end
