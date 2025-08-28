@@ -12,12 +12,25 @@ vivado -mode batch -nojournal -nolog -source C:\Users\glkru\intership\Internship
 
 ```
 
+new
+
+```TCL
+call  C:\Xilinx\Vivado\2023.1\settings64.bat
+vivado -mode batch -nojournal -nolog -source C:\Users\glkru\internship\Internship\06_TCL_intership\demoproject.tcl -tclargs --origin_dir "C:\Users\glkru\internship\Internship\06_TCL_intership\"
+```
+
 ## num0
 
 ```TCL
 call  C:\Xilinx\Vivado\2023.1\settings64.bat
 C:\Users\glkru\intership\Internship\06_TCL_intership\Tasks\num_1.tcl
 vivado -mode gui -source "C:\Users\glkru\intership\Internship\06_TCL_intership\Tasks\num_1.tcl"
+```
+
+new
+
+```TCL
+vivado -mode gui -source "C:\Users\glkru\internship\Internship\06_TCL_intership\Tasks\num_0.tcl"
 ```
 
 ## разбор сгенерированного скрипта
@@ -924,7 +937,7 @@ set_property -name "steps.write_bitstream.args.verbose" -value "0" -objects $obj
       2. Настройка:
          1. Включение предупреждений о нарушениях (options.warn_on_violation = 1)
 
-2. Отчеты после физической оптимизации (post-route phys opt reports) 
+2. Отчеты после физической оптимизации (post-route phys opt reports)
    1. Отчет временных характеристик (473 - 482)(`impl_1_post_route_phys_opt_report_timing_summary_0)`
       1. Проверка и создание (тип report_timing_summary:1.0)
       2. Настройка:
@@ -1036,13 +1049,13 @@ move_dashboard_gadget -name {methodology_1} -row 2 -col 1
    1. Выводит сообщение в консоль с именем проекта (`${_xil_proj_name_}`)
 
 3. Создание и настройка дашборд-гаджетов (508 - 549)
-   1. Гаджет DRC (Design Rule Checks) 
+   1. Гаджет DRC (Design Rule Checks)
       1. Проверка существования (`get_dashboard_gadgets`)
       2. Создание при отсутствии (`create_dashboard_gadget -type drc`)
       3. Настройка отчетов:
          1. Привязка к отчету DRC из impl_1 (`impl_1_route_report_drc_0`)
 
-   2. Гаджет Methodology 
+   2. Гаджет Methodology
       1. Аналогичная проверка и создание (`-type methodology`)
       2. Настройка отчетов:
          1. Привязка к отчету methodology из impl_1
@@ -1146,11 +1159,11 @@ add_files -norecurse -fileset $obj [list \
 - Тестбенч `tb_demo.sv` для верификации дизайна
 
 ##### 5. **Запуски (Runs)**
-- **Синтез**: 
+- **Синтез**:
   ```tcl
   create_run -name synth_1 -flow {Vivado Synthesis 2023} -strategy "Vivado Synthesis Defaults"
   ```
-- **Имплементация**: 
+- **Имплементация**:
   ```tcl
   create_run -name impl_1 -flow {Vivado Implementation 2023} -strategy "Vivado Implementation Defaults"
   ```
