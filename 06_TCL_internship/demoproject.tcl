@@ -27,10 +27,10 @@
 #
 # 3. The following remote source files that were added to the original project:-
 #
-#    "C:/Users/glkru/intership/Internship/06_TCL_intership/source_files/demo.sv"
-#    "C:/Users/glkru/intership/Internship/06_TCL_intership/source_files/demo_wrapper_nexys_a7.sv"
-#    "C:/Users/glkru/intership/Internship/06_TCL_intership/source_files/Nexys-A7-100T-Master.xdc"
-#    "C:/Users/glkru/intership/Internship/06_TCL_intership/source_files/tb_demo.sv"
+#    "C:/Users/glkru/internship/Internship/06_TCL_internship/source_files/demo.sv"
+#    "C:/Users/glkru/internship/Internship/06_TCL_internship/source_files/demo_wrapper_nexys_a7.sv"
+#    "C:/Users/glkru/internship/Internship/06_TCL_internship/source_files/Nexys-A7-100T-Master.xdc"
+#    "C:/Users/glkru/internship/Internship/06_TCL_internship/source_files/tb_demo.sv"
 #
 #*****************************************************************************************
 

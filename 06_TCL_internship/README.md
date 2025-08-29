@@ -8,7 +8,7 @@
 
 ```TCL
 call  C:\Xilinx\Vivado\2023.1\settings64.bat
-vivado -mode batch -nojournal -nolog -source C:\Users\glkru\intership\Internship\06_TCL_intership\demoproject.tcl -tclargs --origin_dir "C:\Users\glkru\intership\Internship\06_TCL_intership"
+vivado -mode batch -nojournal -nolog -source C:\Users\glkru\internship\Internship\06_TCL_internship\demoproject.tcl -tclargs --origin_dir "C:\Users\glkru\internship\Internship\06_TCL_internship"
 
 ```
 
@@ -16,21 +16,21 @@ new
 
 ```TCL
 call  C:\Xilinx\Vivado\2023.1\settings64.bat
-vivado -mode batch -nojournal -nolog -source C:\Users\glkru\internship\Internship\06_TCL_intership\demoproject.tcl -tclargs --origin_dir "C:\Users\glkru\internship\Internship\06_TCL_intership\"
+vivado -mode batch -nojournal -nolog -source C:\Users\glkru\internship\Internship\06_TCL_internship\demoproject.tcl -tclargs --origin_dir "C:\Users\glkru\internship\Internship\06_TCL_internship\"
 ```
 
 ## num0
 
 ```TCL
 call  C:\Xilinx\Vivado\2023.1\settings64.bat
-C:\Users\glkru\intership\Internship\06_TCL_intership\Tasks\num_1.tcl
-vivado -mode gui -source "C:\Users\glkru\intership\Internship\06_TCL_intership\Tasks\num_1.tcl"
+C:\Users\glkru\internship\Internship\06_TCL_internship\Tasks\num_1.tcl
+vivado -mode gui -source "C:\Users\glkru\internship\Internship\06_TCL_internship\Tasks\num_1.tcl"
 ```
 
 new
 
 ```TCL
-vivado -mode gui -source "C:\Users\glkru\internship\Internship\06_TCL_intership\Tasks\num_0.tcl"
+vivado -mode gui -source "C:\Users\glkru\internship\Internship\06_TCL_internship\Tasks\num_0.tcl"
 ```
 
 ## разбор сгенерированного скрипта
@@ -89,7 +89,7 @@ set script_file "demoproject.tcl"
 1. proc -  означает объявление процедуры checkRequiredFiles { origin_dir}, которая принимает на вход базовую директорию
 2. Базово задает статус  true
 3. Создает список необходимых файлов и пути к ним
-4. Проверяет существование файлов по указанным путям через foreach и если , что-то не находит, ставит статус в фолз
+4. Проверяет существование файлов по указанным путям через foreach и если , что-то не находит, ставит статус в false
 5. Процедура возвращает статус
 
 Дальше идут отдельные команды
@@ -552,7 +552,7 @@ set_property -name "options.report_unconstrained" -value "1" -objects $obj
    * 0 (по умолчанию) → Vivado применяет дополнительные проверки IDR.
    * 1 → Vivado отключает часть этих проверок, давая больше свободы при реализации дизайна.
 
-3. В  TCL блок try-catch обьеденен в один блок  catch
+3. В  TCL блок try-catch объединён в один блок  catch
 
 ---
 
