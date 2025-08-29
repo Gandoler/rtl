@@ -11,8 +11,8 @@ if {[file exists $project_path]} {
     launch_runs synth_1 -jobs 4
     wait_on_run synth_1
 
-    
+
         open_run synth_1 -name synth_1
         show_schematic -name "The Grates scheme" [get_cells demo_wrapper_nexys_a7]
-   
+
 }
