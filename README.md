@@ -46,9 +46,19 @@
 
 ## 03 Оформление технической документации
 
+>сначала описать потом писать - очень удобно!
+
 [текущая ссылка](https://gitlab.borisblade.ru/glebFrolov/Internship/-/tree/glebFrolov.inter_in_tec_doc/02_Registration_of_technical_documentation)
 
 1. мд файл с описанием и примером большинства его возможностей
 2. пример работы waveform'ы, сделанной в [wavedrom](https://wavedrom.com)
    там ну сууупер примерная схема
 3. мой пример из будущего с "документацией моего FP сумматора из 9 главы"
+
+## 04 Настройка VScode для работы с SystemVerilog
+
+>тут я отдельной репозитории не создавал, результат работы по этой главе - переход на полноценную работу в vs code
+
+## 05 Работа в Vivado и введение в SystemVerilog
+
+[текущая ссылка](https://gitlab.borisblade.ru/glebFrolov/Internship/-/tree/glebFrolov.vivado_basic/05_vivado_basic)
