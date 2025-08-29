@@ -92,4 +92,13 @@
 > выполнение  [лабораторную работу](https://github.com/MPSU/FPGA_pract/blob/main/Labs/01.%20Tcl/README.md)
 
 1. создал TCL скрипт для создания проекта и примерно разобрал его (конечно, без 100% понимания процесса)
-2. решил все варианты заданий, представленных в этой лабе
+2. решил все варианты заданий, представленных в этой лабе и сделал мини отчет по ним
+
+## 07 Файлы ограничений дизайна SDC/XDC
+
+[текущая ссылка](https://gitlab.borisblade.ru/glebFrolov/Internship/-/tree/glebFrolov.SDC_XDC)
+
+[отчет в openproject](https://openproject.borisblade.ru/projects/stazhirovki-rtl/work_packages/1827/activity?query_props=%7B%22c%22%3A%5B%22id%22%2C%22subject%22%2C%22type%22%2C%22status%22%2C%22priority%22%2C%22assignee%22%2C%22category%22%2C%22dueDate%22%2C%22percentageDone%22%5D%2C%22hi%22%3Atrue%2C%22g%22%3A%22%22%2C%22is%22%3Atrue%2C%22tv%22%3Afalse%2C%22hla%22%3A%5B%22status%22%2C%22priority%22%2C%22dueDate%22%5D%2C%22t%22%3A%22id%3Aasc%22%2C%22f%22%3A%5B%7B%22n%22%3A%22status%22%2C%22o%22%3A%22o%22%2C%22v%22%3A%5B%5D%7D%5D%2C%22pp%22%3A20%2C%22pa%22%3A4%7D)
+
+>  Изучение и перевод с небольшими заметками документа-презентацию по SDC.
+> с небольшими проблемами выполнено задание
