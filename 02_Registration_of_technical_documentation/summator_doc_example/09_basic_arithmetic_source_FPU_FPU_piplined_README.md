@@ -90,7 +90,7 @@
 
 *Комментарий:* Эта стадия выравнивает мантиссы входных чисел по одному порядку. Сначала вычисляется, у какого операнда порядок больше: если `exp_a > exp_b`, то полю `b` присваивается больший порядок `exp_a`, а его мантисса `mant_b` сдвигается вправо на разность порядков; иначе аналогично для `a`. Таким образом на выходе оба числа имеют одинаковый порядок, а мантисса меньшего из них выровнена по битам старшего.
 
-![mant_shif](pic/mant_shift.png)
+![mant_shif](./pic/09_basic_arithmetic_pic_fp_sum_mant_shift.png)
 
 [ссылка в drawio](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&dark=auto#G1FB_OMjwa9uwDb7vLqLOIjS0Do-0mhWfe)
 
