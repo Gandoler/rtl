@@ -103,3 +103,15 @@
 
 >  Изучение и перевод с небольшими заметками документа-презентацию по SDC.
 > с небольшими проблемами выполнено задание
+> к этому заданию сделано мини описание и обьяснение проблем
+
+## 08 Линтер
+
+[текущая ссылка](https://gitlab.borisblade.ru/glebFrolov/Internship/-/tree/glebFrolov.Linter)
+
+[отчет в openproject](https://openproject.borisblade.ru/projects/stazhirovki-rtl/work_packages/1878/activity?query_props=%7B%22c%22%3A%5B%22id%22%2C%22subject%22%2C%22type%22%2C%22status%22%2C%22priority%22%2C%22assignee%22%2C%22category%22%2C%22dueDate%22%2C%22percentageDone%22%5D%2C%22hi%22%3Atrue%2C%22g%22%3A%22%22%2C%22is%22%3Atrue%2C%22tv%22%3Afalse%2C%22hla%22%3A%5B%22status%22%2C%22priority%22%2C%22dueDate%22%5D%2C%22t%22%3A%22id%3Aasc%22%2C%22f%22%3A%5B%7B%22n%22%3A%22status%22%2C%22o%22%3A%22o%22%2C%22v%22%3A%5B%5D%7D%5D%2C%22pp%22%3A20%2C%22pa%22%3A4%7D)
+
+[репозиторий с примером](https://gitlab.borisblade.ru/iplib/sg_test)
+
+> первым делом нужно было отредактировать makefile, что бы запускалось, что нужно
+> прогнал пример пол
