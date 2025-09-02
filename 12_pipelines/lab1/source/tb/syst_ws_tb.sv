@@ -91,6 +91,11 @@ parameter CLK_PERIOD = 10;
    initial begin
     pkt pkt;
     wait(!rst_i);
+    @(posedge clk_i);
+    @(posedge clk_i);
+    @(posedge clk_i);
+    @(posedge clk_i);
+    @(posedge clk_i);
     forever begin
       @(posedge clk_i);
         exp_mbx.get(pkt);
