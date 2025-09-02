@@ -44,11 +44,17 @@ module pipilined_answer_tb#(
     wait(!rst_i);
     repeat(100) begin
       @(posedge clk_i);
-      pow_data_i   <= $urandom_range(0, 3);//2**DATA_WIDTH-1
+      pow_data_i   <= $urandom_range(0, 2**DATA_WIDTH-1);//2**DATA_WIDTH-1
       data_valid_i <=1;
     end
-    @(posedge clk_i);
-    data_valid_i <=0;
+    repeat(10) begin
+      @(posedge clk_i);
+      data_valid_i <=0;
+      @(posedge clk_i);
+      pow_data_i   <= $urandom_range(0, 2**DATA_WIDTH-1);//2**DATA_WIDTH-1
+      data_valid_i <=1;
+    end
+
   end
 
   typedef struct {
@@ -65,11 +71,12 @@ module pipilined_answer_tb#(
   initial begin
     pkt pkt;
     wait(!rst_i);
-    repeat(100) begin
+    forever begin
       @(posedge clk_i);
       pkt.input_data    = pow_data_i;
       pkt.expected = (pow_data_i ** 5);
-      exp_mbx.put(pkt);
+      if(data_valid_i)
+        exp_mbx.put(pkt);
     end
   end
 
