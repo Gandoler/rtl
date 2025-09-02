@@ -65,19 +65,19 @@ module pow5_pipelined_answer
 
 
   always_ff @ (posedge clk_i) // регистрирование входов для уменьшения крит пути
-    if (input_valid_ff)
+    if (data_valid_i)
       pow_input_ff <= pow_data_i;
 
   always_ff @ (posedge clk_i)
-    if (data_valid_stage_1_ff)
+    if (input_valid_ff)
       pow_input_stage_1_ff <= pow_input_ff;
 
   always_ff @ (posedge clk_i)
-    if (data_valid_stage_2_ff)
+    if (data_valid_stage_1_ff)
       pow_input_stage_2_ff <= pow_input_stage_1_ff;
 
   always_ff @ (posedge clk_i)
-    if (data_valid_stage_3_ff)
+    if (data_valid_stage_2_ff)
       pow_input_stage_3_ff <= pow_input_stage_2_ff;
 
 
