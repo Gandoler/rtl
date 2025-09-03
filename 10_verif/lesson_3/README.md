@@ -62,3 +62,67 @@ task drive_master_packet(int num_packets);
 ```
 
 он в цикле n-ое-1 количество раз вызывает `drive_master` с нулем в is_last и на n-ый раз закидывает 1.
+
+
+## 04_pow
+
+### 1. Это задание заключается в том, что нужно увидеть в чем ошибка и почему его рубит по таймауту, а не по выполнению всех проверок(скорее всего это из-за этой части кода)
+
+```sv
+// Slave
+    initial begin
+        do_slave_drive();
+        do_slave_monitor();
+    end
+```
+
+тут наверное нужно сделать форк\джоин
+```sv
+// Slave
+    initial begin
+      fork
+        do_slave_drive();
+        do_slave_monitor();
+      join
+    end
+```
+
+что бы эти действия выполнялись параллельно
+
+
+### 2. в процессе выполнения этого задания я столкнулся с очень неприятной ошибкой
+
+```tcl
+ERROR: File:  Line: 0 : Invalid X/Z in a state expression value for variable v_2 in an active constraint. If v_2 is intended to be used as a checker as described in LRM1800-2012, 13.10.1, please assign a valid value to state variable. If v_2 is intended to be a random variable, ensure it is declared with 'rand' and the rand_mode has not been turned off.
+Time: 0 ps  Iteration: 0  Process: /testbench_04/gen_master/Block91_4/Block91_5
+  File: C:/Users/glkru/internship/Internship/10_verif/lesson_3/04_pow/testbench_04.sv
+```
+>После потраченных 10 минут с Сергеем Андреевичем, было выяснено, что vivado не поддерживает рандомизацию структур через
+
+```sv
+ if( !std::randomize(p) with {
+                p.delay inside {[0:10]};
+                p.tlast == (i == size - 1);
+            } ) begin
+                $error("Can't randomize packet!");
+                $finish();
+            end
+```
+
+> и пришлось поставить базовое
+
+```sv
+  p.delay = $urandom_range(0, 10);
+            p.tlast = (i == size - 1);
+```
+
+А задание было решено просто добавление форк\джоин
+```sv
+// Slave
+    initial begin
+      fork
+        do_slave_drive();
+        do_slave_monitor();
+      join
+    end
+```

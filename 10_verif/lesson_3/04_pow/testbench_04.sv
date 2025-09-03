@@ -1,15 +1,15 @@
 `timescale 1ns/1ps
 
 // TODO:
-// РўРµСЃС‚Р±РµРЅС‡ Р·Р°РІРµСЂС€Р°РµС‚СЃСЏ РїРѕ С‚Р°Р№РјР°СѓС‚Сѓ.
-// РћРїСЂРµРґРµР»РёС‚Рµ, С‡С‚Рѕ СЃ РЅРёРј РЅРµ С‚Р°Рє.
-// РСЃРїРѕР»СЊР·СѓР№С‚Рµ СЃРѕРІРµС‚С‹ РїРѕ РѕС‚Р»Р°РґРєРµ.
+// Тестбенч завершается по таймауту.
+// Определите, что с ним не так.
+// Используйте советы по отладке.
 
 module testbench_04;
 
 
     //---------------------------------
-    // РЎРёРіРЅР°Р»С‹
+    // Сигналы
     //---------------------------------
 
     logic        clk;
@@ -29,10 +29,10 @@ module testbench_04;
 
 
     //---------------------------------
-    // РњРѕРґСѓР»СЊ РґР»СЏ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ
+    // Модуль для тестирования
     //---------------------------------
 
-    pow DUT(
+    pow_04 DUT(
         .clk      ( clk       ),
         .aresetn  ( aresetn   ),
         .s_tvalid ( s_tvalid  ),
@@ -49,13 +49,13 @@ module testbench_04;
 
 
     //---------------------------------
-    // РџРµСЂРµРјРµРЅРЅС‹Рµ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ
+    // Переменные тестирования
     //---------------------------------
 
-    // РџРµСЂРёРѕРґ С‚Р°РєС‚РѕРІРѕРіРѕ СЃРёРіРЅР°Р»Р°
+    // Период тактового сигнала
     parameter CLK_PERIOD = 10;
 
-    // РџР°РєРµС‚ Рё mailbox'С‹
+    // Пакет и mailbox'ы
     typedef struct {
         rand int          delay;
         rand logic [31:0] tdata;
@@ -69,33 +69,35 @@ module testbench_04;
 
 
     //---------------------------------
-    // РњРµС‚РѕРґС‹
+    // Методы
     //---------------------------------
 
-    // Р“РµРЅРµСЂР°С†РёСЏ СЃРёРіРЅР°Р»Р° СЃР±СЂРѕСЃР°
+    // Генерация сигнала сброса
     task reset();
         aresetn <= 0;
         #(CLK_PERIOD);
         aresetn <= 1;
     endtask
 
-    // РўР°Р№РјР°СѓС‚ С‚РµСЃС‚Р°
+    // Таймаут теста
     task timeout();
         repeat(100000) @(posedge clk);
         $stop();
     endtask
 
     // Master
-    task gen_master(int size = 1);
+    task gen_master(input int size = 1);
         packet p;
         for(int i = 0; i < size; i = i + 1) begin
-            if( !std::randomize(p) with {
+            p.delay = $urandom_range(0, 10);
+            p.tlast = (i == size - 1);
+            /* if( !std::randomize(p) with {
                 p.delay inside {[0:10]};
                 p.tlast == (i == size - 1);
             } ) begin
                 $error("Can't randomize packet!");
                 $finish();
-            end
+            end */
             gen2drv.put(p);
         end
     endtask
@@ -163,7 +165,7 @@ module testbench_04;
         wait(aresetn);
     endtask
 
-    task drive_slave(int delay = 0);
+    task drive_slave(input int delay = 0);
         repeat(delay) @(posedge clk);
         m_tready <= 1;
         @(posedge clk);
@@ -196,7 +198,7 @@ module testbench_04;
         end
     endtask
 
-    // РџСЂРѕРІРµСЂРєР°
+    // Проверка
     task check(packet in, packet out);
         if( in.tid !== out.tid ) begin
             $error("%0t Invalid TID: Real: %h, Expected: %h",
@@ -229,10 +231,10 @@ module testbench_04;
 
 
     //---------------------------------
-    // Р’С‹РїРѕР»РЅРµРЅРёРµ
+    // Выполнение
     //---------------------------------
 
-    // Р“РµРЅРµСЂР°С†РёСЏ С‚Р°РєС‚РѕРІРѕРіРѕ СЃРёРіРЅР°Р»Р°
+    // Генерация тактового сигнала
     initial begin
         clk <= 0;
         forever begin
@@ -240,7 +242,7 @@ module testbench_04;
         end
     end
 
-    // РЎР±СЂРѕСЃ
+    // Сброс
     initial begin
         reset();
     end
@@ -256,16 +258,18 @@ module testbench_04;
 
     // Slave
     initial begin
+      fork
         do_slave_drive();
         do_slave_monitor();
+      join
     end
 
-    // РџСЂРѕРІРµСЂРєР°
+    // Проверка
     initial begin
         do_check();
     end
 
-    // РўР°Р№РјР°СѓС‚
+    // Таймаут
     initial begin
         timeout();
     end

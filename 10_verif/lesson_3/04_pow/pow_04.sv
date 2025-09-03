@@ -1,3 +1,5 @@
+`timescale 1ns/1ps
+
 module pow_04 (
 
     input logic        clk,
