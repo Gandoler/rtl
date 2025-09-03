@@ -44,3 +44,21 @@ Error: Invalid TDATA: Real: 3118512736, Expected: 2337008256 ^ 5 = 0
 endtask
 ```
 просто в этот таск добавляем задержку
+
+
+## 03_pow
+
+тут нужно было создать пакетированность передачи данных
+
+> для этого был создан task   `task drive_master_packet(int num_packets)`
+
+```
+task drive_master_packet(int num_packets);
+    for (int i = 0; i < num_packets; i++) begin
+        int delay = $urandom_range(0, 10);     // случайная задержка
+        drive_master(delay, (i == num_packets - 1));
+    end
+    endtask
+```
+
+он в цикле n-ое-1 количество раз вызывает `drive_master` с нулем в is_last и на n-ый раз закидывает 1.
