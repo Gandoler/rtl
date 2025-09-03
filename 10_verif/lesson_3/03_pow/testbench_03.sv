@@ -27,7 +27,7 @@ module testbench_03;
     // Модуль для тестирования
     //---------------------------------
 
-    pow DUT(
+    pow_03 DUT(
         .clk      ( clk       ),
         .aresetn  ( aresetn   ),
         .s_tvalid ( s_tvalid  ),
@@ -93,8 +93,11 @@ module testbench_03;
     // Задача должна генерировать нужное количество
     // транзакций со случайной задержкой, причем последняя
     // транзакция должна иметь значение tlast == 1
-    task drive_master_packet(/*Аргументы.*/);
-        // Тело.
+    task drive_master_packet();
+      integer pkt_size = $urandom_range(1:20);
+      for(int i=0; i < pkt_size-1; i++)
+        drive_master($urandom_range(1:20),0);
+      drive_master($urandom_range(1:20),1);
     endtask
 
     task drive_master(int delay = 0, bit is_last = 0);
@@ -110,6 +113,8 @@ module testbench_03;
         s_tvalid <= 0;
         s_tlast  <= 0;
     endtask
+
+
 
     task reset_slave();
         wait(~aresetn);
@@ -188,7 +193,7 @@ module testbench_03;
         reset_master();
         @(posedge clk);
         repeat(1000) begin
-            drive_master($urandom_range(0, 10));
+            drive_master_packet();
         end
         $stop();
     end

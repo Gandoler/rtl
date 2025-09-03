@@ -1,4 +1,4 @@
-module pow (
+module pow_03 (
 
     input logic        clk,
     input logic        aresetn,
