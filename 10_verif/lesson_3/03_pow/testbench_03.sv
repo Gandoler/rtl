@@ -93,12 +93,12 @@ module testbench_03;
     // Задача должна генерировать нужное количество
     // транзакций со случайной задержкой, причем последняя
     // транзакция должна иметь значение tlast == 1
-    task drive_master_packet();
-      integer pkt_size = $urandom_range(1:20);
-      for(int i=0; i < pkt_size-1; i++)
-        drive_master($urandom_range(1:20),0);
-      drive_master($urandom_range(1:20),1);
-    endtask
+    task drive_master_packet(int num_packets);
+    for (int i = 0; i < num_packets; i++) begin
+        int delay = $urandom_range(0, 10);     // случайная задержка
+        drive_master(delay, (i == num_packets - 1));
+    end
+    endtask 
 
     task drive_master(int delay = 0, bit is_last = 0);
         repeat(delay) @(posedge clk);
@@ -193,7 +193,8 @@ module testbench_03;
         reset_master();
         @(posedge clk);
         repeat(1000) begin
-            drive_master_packet();
+          int pkt_size = $urandom_range(1, 20);
+          drive_master_packet(pkt_size);
         end
         $stop();
     end
