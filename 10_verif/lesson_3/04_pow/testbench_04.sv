@@ -1,6 +1,11 @@
 `timescale 1ns/1ps
 
-module testbench_03;
+// TODO:
+// Тестбенч завершается по таймауту.
+// Определите, что с ним не так.
+// Используйте советы по отладке.
+
+module testbench_04;
 
 
     //---------------------------------
@@ -27,7 +32,7 @@ module testbench_03;
     // Модуль для тестирования
     //---------------------------------
 
-    pow_03 DUT(
+    pow DUT(
         .clk      ( clk       ),
         .aresetn  ( aresetn   ),
         .s_tvalid ( s_tvalid  ),
@@ -52,10 +57,13 @@ module testbench_03;
 
     // Пакет и mailbox'ы
     typedef struct {
-        logic [31:0] tdata;
-        logic        tid;
+        rand int          delay;
+        rand logic [31:0] tdata;
+        rand logic        tid;
+        rand logic        tlast;
     } packet;
 
+    mailbox#(packet) gen2drv = new();
     mailbox#(packet) in_mbx  = new();
     mailbox#(packet) out_mbx = new();
 
@@ -77,7 +85,27 @@ module testbench_03;
         $stop();
     endtask
 
-    // Генерация входных воздействий
+    // Master
+    task gen_master(int size = 1);
+        packet p;
+        for(int i = 0; i < size; i = i + 1) begin
+            if( !std::randomize(p) with {
+                p.delay inside {[0:10]};
+                p.tlast == (i == size - 1);
+            } ) begin
+                $error("Can't randomize packet!");
+                $finish();
+            end
+            gen2drv.put(p);
+        end
+    endtask
+
+    task do_master_gen();
+        repeat(1000) begin
+            gen_master($urandom_range(1, 10));
+        end
+    endtask
+
     task reset_master();
         wait(~aresetn);
         s_tvalid <= 0;
@@ -86,26 +114,12 @@ module testbench_03;
         wait(aresetn);
     endtask
 
-    // TODO:
-    // Создайте задачу drive_master_packet(), в которую
-    // входным аргументом будет передаваться количество
-    // пакетов.
-    // Задача должна генерировать нужное количество
-    // транзакций со случайной задержкой, причем последняя
-    // транзакция должна иметь значение tlast == 1
-    task drive_master_packet(int num_packets);
-    for (int i = 0; i < num_packets; i++) begin
-        int delay = $urandom_range(0, 10);     // случайная задержка
-        drive_master(delay, (i == num_packets - 1));
-    end
-    endtask 
-
-    task drive_master(int delay = 0, bit is_last = 0);
-        repeat(delay) @(posedge clk);
+    task drive_master(packet p);
+        repeat(p.delay) @(posedge clk);
         s_tvalid <= 1;
-        s_tdata  <= $urandom();
-        s_tid    <= $urandom();
-        s_tlast  <= is_last;
+        s_tdata  <= p.tdata;
+        s_tid    <= p.tid;
+        s_tlast  <= p.tlast;
         do begin
             @(posedge clk);
         end
@@ -114,8 +128,35 @@ module testbench_03;
         s_tlast  <= 0;
     endtask
 
+    task do_master_drive();
+        packet p;
+        reset_master();
+        @(posedge clk);
+        forever begin
+            gen2drv.get(p);
+            drive_master(p);
+        end
+    endtask
 
+    task monitor_master();
+        packet p;
+        @(posedge clk);
+        if( s_tvalid & s_tready ) begin
+            p.tdata  = s_tdata;
+            p.tid    = s_tid;
+            p.tlast  = s_tlast;
+            in_mbx.put(p);
+        end
+    endtask
 
+    task do_master_monitor();
+        wait(aresetn);
+        forever begin
+            monitor_master();
+        end
+    endtask
+
+    // Slave
     task reset_slave();
         wait(~aresetn);
         m_tready <= 0;
@@ -129,41 +170,61 @@ module testbench_03;
         m_tready <= 0;
     endtask
 
-    // Мониторинг входов
-    task monitor_master();
-        packet p;
+    task do_slave_drive();
+        reset_slave();
         @(posedge clk);
-        if( s_tvalid & s_tready ) begin
-            p.tdata  = s_tdata;
-            p.tid    = s_tid;
-            in_mbx.put(p);
+        forever begin
+            drive_slave($urandom_range(0, 10));
         end
     endtask
 
-    // Мониторинг выходов
     task monitor_slave();
         packet p;
         @(posedge clk);
         if( m_tvalid & m_tready ) begin
             p.tdata  = m_tdata;
             p.tid    = m_tid;
+            p.tlast  = m_tlast;
             out_mbx.put(p);
         end
     endtask
 
+    task do_slave_monitor();
+        wait(aresetn);
+        forever begin
+            monitor_slave();
+        end
+    endtask
+
     // Проверка
-    task check();
-        packet in_p, out_p;
-        in_mbx.get(in_p);
-        out_mbx.get(out_p);
-        if( in_p.tid !== out_p.tid ) begin
+    task check(packet in, packet out);
+        if( in.tid !== out.tid ) begin
             $error("%0t Invalid TID: Real: %h, Expected: %h",
-                $time(), out_p.tid, in_p.tid);
+                $time(), out.tid, in.tid);
         end
-        if( out_p.tdata !== in_p.tdata ** 5 ) begin
+        if( out.tdata !== in.tdata ** 5 ) begin
             $error("%0t Invalid TDATA: Real: %0d, Expected: %0d ^ 5 = %0d",
-                $time(), out_p.tdata, in_p.tdata, in_p.tdata ** 5);
+                $time(), out.tdata, in.tdata, in.tdata ** 5);
         end
+        if( in.tlast !== out.tlast ) begin
+            $error("%0t Invalid TLAST: Real: %1b, Expected: %1b",
+                $time(), out.tlast, in.tlast);
+        end
+    endtask
+
+    task do_check();
+        int cnt;
+        packet in_p, out_p;
+        forever begin
+            in_mbx.get(in_p);
+            out_mbx.get(out_p);
+            check(in_p, out_p);
+            cnt = cnt + out_p.tlast;
+            if( cnt == 1000 ) begin
+                break;
+            end
+        end
+        $stop();
     endtask
 
 
@@ -184,49 +245,24 @@ module testbench_03;
         reset();
     end
 
-    // TODO:
-    // Перепишите данный процесс на вызов задачи
-    // drive_master_packet(), которую вы реализовали
-    // выше. Вызовов тоже должно быть много, размер
-    // задавайте случайным образом.
+    // Master
     initial begin
-        reset_master();
-        @(posedge clk);
-        repeat(1000) begin
-       
-          drive_master_packet($urandom_range(1, 20));
-        end
-        $stop();
+        fork
+            do_master_gen();
+            do_master_drive();
+            do_master_monitor();
+        join
     end
 
+    // Slave
     initial begin
-        reset_slave();
-        @(posedge clk);
-        forever begin
-            drive_slave($urandom_range(0, 10));
-        end
-    end
-
-    // Мониторинг
-    initial begin
-        wait(aresetn);
-        forever begin
-            monitor_master();
-        end
-    end
-
-    initial begin
-        wait(aresetn);
-        forever begin
-            monitor_slave();
-        end
+        do_slave_drive();
+        do_slave_monitor();
     end
 
     // Проверка
     initial begin
-        forever begin
-            check();
-        end
+        do_check();
     end
 
     // Таймаут
