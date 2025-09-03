@@ -52,6 +52,8 @@ parameter CLK_PERIOD = 10;
    // Генерация входных воздействий
   initial begin
     wait(!rst_i);
+    @(posedge clk_i);
+
     repeat(100) begin
       @(posedge clk_i);
       x1_i   <= $urandom_range(0,2);// 2**8-1
@@ -92,9 +94,11 @@ parameter CLK_PERIOD = 10;
     pkt pkt;
     wait(!rst_i);
     @(posedge clk_i);
+
     forever begin
       @(posedge clk_i);
         exp_mbx.get(pkt);
+        @(posedge clk_i);
         if (y1_o !== pkt.y1_expected)
           $error("[%0t] ERROR: input_data: x1=%0d,x2=%0d,x3=%0d expected: y1=%0d, got: y1=%0d",
             $time, pkt.x1_input, pkt.x2_input, pkt.x3_input, pkt.y1_expected, y1_o);
@@ -103,6 +107,7 @@ parameter CLK_PERIOD = 10;
             $time,  pkt.x1_input, pkt.x2_input, pkt.x3_input, y1_o);
 
         @(posedge clk_i);
+
         if (y2_o !== pkt.y2_expected)
          $error("[%0t] ERROR: input_data: x1=%0d,x2=%0d,x3=%0d expected: y2=%0d, got: y2=%0d",
            $time, pkt.x1_input, pkt.x2_input, pkt.x3_input, pkt.y2_expected, y2_o);
