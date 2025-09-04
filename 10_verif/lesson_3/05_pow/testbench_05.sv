@@ -27,7 +27,7 @@ module testbench_05;
     // Модуль для тестирования
     //---------------------------------
 
-    pow DUT(
+    pow_05 DUT(
         .clk      ( clk       ),
         .aresetn  ( aresetn   ),
         .s_tvalid ( s_tvalid  ),
@@ -52,10 +52,10 @@ module testbench_05;
 
     // Пакет и mailbox'ы
     typedef struct {
-        rand int          delay;
-        rand logic [31:0] tdata;
-        rand logic        tid;
-        rand logic        tlast;
+        int          delay;
+        logic [31:0] tdata;
+        logic        tid;
+        logic        tlast;
     } packet;
 
     mailbox#(packet) gen2drv = new();
@@ -75,39 +75,36 @@ module testbench_05;
     endtask
 
     // Таймаут теста
-    task timeout(int timeout_cycles = 100000);
+    task timeout(input int timeout_cycles = 1000000);
         repeat(timeout_cycles) @(posedge clk);
         $stop();
     endtask
 
     // Master
     task gen_master(
-        int size_min   = 1,
-        int size_max   = 10,
-        int delay_min  = 0,
-        int delay_max  = 10
+        input int size_min   = 1,
+        input int size_max   = 10,
+        input int delay_min  = 0,
+        input int delay_max  = 10
     );
         packet p;
         int size;
         void'(std::randomize(size) with {size inside {[size_min:size_max]};});
         for(int i = 0; i < size; i = i + 1) begin
-            if( !std::randomize(p) with {
-                p.delay inside {[delay_min:delay_max]};
-                p.tlast == (i == size - 1);
-            } ) begin
-                $error("Can't randomize packet!");
-                $finish();
-            end
+            p.delay = $urandom_range(delay_min, delay_max);            
+            p.tlast = (i == size - 1);
+            p.tdata = $urandom();
+            p.tid   = $urandom_range(0, 1);
             gen2drv.put(p);
         end
     endtask
 
     task do_master_gen(
-        int pkt_amount = 100,
-        int size_min   = 1,
-        int size_max   = 10,
-        int delay_min  = 0,
-        int delay_max  = 10
+        input int pkt_amount = 100,
+        input int size_min   = 1,
+        input int size_max   = 10,
+        input int delay_min  = 0,
+        input int delay_max  = 10
     );
         repeat(pkt_amount) begin
             gen_master(size_min, size_max, delay_min, delay_max);
@@ -166,11 +163,11 @@ module testbench_05;
 
     // Master
     task master(
-        int gen_pkt_amount = 100,
-        int gen_size_min   = 1,
-        int gen_size_max   = 10,
-        int gen_delay_min  = 0,
-        int gen_delay_max  = 10
+        input int gen_pkt_amount = 100,
+        input int gen_size_min   = 1,
+        input int gen_size_max   = 10,
+        input int gen_delay_min  = 0,
+        input int gen_delay_max  = 10
     );
         fork
             do_master_gen(gen_pkt_amount, gen_size_min, gen_size_max, gen_delay_min, gen_delay_max);
@@ -186,18 +183,19 @@ module testbench_05;
         wait(aresetn);
     endtask
 
-    task drive_slave(int delay = 0);
+    task drive_slave(input int delay = 0);
         repeat(delay) @(posedge clk);
         m_tready <= 1;
         @(posedge clk);
         m_tready <= 0;
     endtask
 
-    task do_slave_drive();
+    task do_slave_drive(input int slave_delay_min  = 0,     // минимальная задержка для slave
+                        input int slave_delay_max  = 10);   // максимальная задержка для slave););
         reset_slave();
         @(posedge clk);
         forever begin
-            drive_slave($urandom_range(0, 10));
+            drive_slave($urandom_range(slave_delay_min, slave_delay_max));
         end
     endtask
 
@@ -220,9 +218,10 @@ module testbench_05;
     endtask
 
     // Slave
-    task slave();
+    task slave(input int slave_delay_min  = 0,     // минимальная задержка для slave
+               input int slave_delay_max  = 10);   // максимальная задержка для slave);
         fork
-            do_slave_drive();
+            do_slave_drive(slave_delay_min, slave_delay_max);
             do_slave_monitor();
         join
     endtask
@@ -243,7 +242,7 @@ module testbench_05;
         end
     endtask
 
-    task do_check(int pkt_amount = 1);
+    task do_check(input int pkt_amount = 1);
         int cnt;
         packet in_p, out_p;
         forever begin
@@ -251,6 +250,7 @@ module testbench_05;
             out_mbx.get(out_p);
             check(in_p, out_p);
             cnt = cnt + out_p.tlast;
+            if(out_p.tlast) $display("cnt = %d", cnt);
             if( cnt == pkt_amount ) begin
                 break;
             end
@@ -258,7 +258,7 @@ module testbench_05;
         $stop();
     endtask
 
-    task error_checker(int pkt_amount = 1);
+    task error_checker(input int pkt_amount = 1);
         do_check(pkt_amount);
     endtask
 
@@ -282,14 +282,14 @@ module testbench_05;
     // тестбенч не скомпилируется из-за несовпадения
     // количества аргументов в задаче slave()
     task test(
-        int gen_pkt_amount   = 100,   // количество пакетов
-        int gen_size_min     = 1,     // мин. размер пакета
-        int gen_size_max     = 10,    // макс. размер пакета
-        int gen_delay_min    = 0,     // мин. задержка между транзакциями
-        int gen_delay_max    = 10,    // макс. задержка между транзакциями
-        int slave_delay_min  = 0,     // минимальная задержка для slave
-        int slave_delay_max  = 10,    // максимальная задержка для slave
-        int timeout_cycles   = 100000 // таймаут теста
+        input int gen_pkt_amount   = 50,   // количество пакетов
+        input int gen_size_min     = 1,     // мин. размер пакета
+        input int gen_size_max     = 10,    // макс. размер пакета
+        input int gen_delay_min    = 0,     // мин. задержка между транзакциями
+        input int gen_delay_max    = 10,    // макс. задержка между транзакциями
+        input int slave_delay_min  = 0,     // минимальная задержка для slave
+        input int slave_delay_max  = 10,    // максимальная задержка для slave
+        input int timeout_cycles   = 1000000 // таймаут теста
     );
         fork
             master       (gen_pkt_amount, gen_size_min, gen_size_max, gen_delay_min, gen_delay_max);
@@ -311,7 +311,7 @@ module testbench_05;
             .gen_delay_max  (    20),
             .slave_delay_min(     0),
             .slave_delay_max(     5),
-            .timeout_cycles (100000)
+            .timeout_cycles (1000000)
         );
     end
 

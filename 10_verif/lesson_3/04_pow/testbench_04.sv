@@ -91,6 +91,8 @@ module testbench_04;
         for(int i = 0; i < size; i = i + 1) begin
             p.delay = $urandom_range(0, 10);
             p.tlast = (i == size - 1);
+            p.tdata = $urandom();
+            p.tid   = $urandom_range(0, 1);
             /* if( !std::randomize(p) with {
                 p.delay inside {[0:10]};
                 p.tlast == (i == size - 1);
