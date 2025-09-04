@@ -49,10 +49,10 @@ module testbench_02;
         end
     end
 
-    task automatic read_write(bit can_interleave = 0);
+    task automatic read_write(input bit can_interleave = 0);
         bit read, write;
         read = $urandom();
-        if( can_interleave ) write = $urandom();
+        if( can_interleave ) write = read ? (0) : ($urandom());
         else write = ~read;
         mem_read  <= read;
         mem_write <= write;
@@ -84,9 +84,7 @@ module testbench_02;
     // (то есть после 'mem_req', равного 1, 'mem_ack'
     // приходит не позднее, чем через 5 тактов).
     property pReqAckLow;
-        @(posedge clk) (
-            /* Пишите здесь */
-        );
+         @(posedge clk) (mem_req && (mem_addr[7:0] < 'd64)) |-> ##[0:5] mem_ack;
     endproperty
 
     apHandshake: assert property(pReqAckLow) begin
@@ -102,9 +100,8 @@ module testbench_02;
     // быть одновременно выставлены в логическую
     // 1 'mem_read' и 'mem_write'.
     property pReadWrite;
-        @(posedge clk) (
             /* Пишите здесь */
-        );
+             @(posedge clk) mem_req |-> !(mem_read && mem_write) throughout mem_req;
     endproperty
 
     apReadWrite: assert property(pReadWrite) begin
@@ -119,9 +116,7 @@ module testbench_02;
     // не может появляться (принимать значение 1)
     // в ходе записи в память ('mem_write' && 'mem_req').
     property pErrWrite;
-        @(posedge clk) (
-            /* Пишите здесь */
-        );
+         @(posedge clk) (mem_write && mem_req) |-> !mem_err throughout (mem_write && mem_req);
     endproperty
 
     apErrWrite: assert property(pErrWrite) begin
@@ -137,9 +132,7 @@ module testbench_02;
     // при 'mem_ack', равном 1, не может принимать
     // неопределенное (X) значение.
     property pDataRead;
-        @(posedge clk) (
-            /* Пишите здесь */
-        );
+        @(posedge clk) (mem_read && mem_req) && mem_ack |-> !$isunknown(mem_data);
     endproperty
 
     apDataRead: assert property(pDataRead) begin
