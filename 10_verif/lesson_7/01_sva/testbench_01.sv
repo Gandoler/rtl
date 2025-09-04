@@ -33,21 +33,21 @@ module testbench_01;
     end
 
     // DUT
-    requester DUT (
+    requester_01 DUT (
         .clk    ( clk     ),
         .ready  ( ready   ),
         .request( request )
     );
 
-    // TODO: 
+    // TODO:
     // Напишите SVA, определяющий, что если 'ready'
     // равен 1, то в течение от 1 до 10 тактов после
     // этого 'request' будет равен 1.
-    // TODO: 
-    // Определите, выполняется ли  описанное 
-    // в SVA условие в ходе симуляции. 
+    // TODO:
+    // Определите, выполняется ли  описанное
+    // в SVA условие в ходе симуляции.
     property pReadyReq;
-        @(posedge clk) /* Пишите здесь */
+        @(posedge clk)(ready |=> ##[1:10] request);
     endproperty
 
     apHandshake: assert property(pReadyReq) begin
