@@ -25,7 +25,7 @@ module testbench_06;
     // Модуль для тестирования
     //---------------------------------
 
-    alu DUT(
+    alu_06 DUT(
         .clk      ( clk       ),
         .aresetn  ( aresetn   ),
         .s_tvalid ( s_tvalid  ),

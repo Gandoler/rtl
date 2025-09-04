@@ -162,10 +162,11 @@ Time: 0 ps  Iteration: 0  Process: /testbench_04/gen_master/Block91_4/Block91_5
         end
     endtask
 ```
+надо просто добавить это:
 
 ```sv
   p.tdata = $urandom();
   p.tid   = $urandom_range(0, 1);
 ```
 
-надо просто добавить это
+## 6 номер - я пропущу, при необходимости - сделаю (постараюсь реализацию сделать в главе pipelines)
