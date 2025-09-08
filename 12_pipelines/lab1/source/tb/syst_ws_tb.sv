@@ -1,13 +1,21 @@
-module syst_ws_tb();
+module syst_ws_tb#(
+  parameter WIDTH_X = 7,
+  parameter WIDTH_Y = 18
+)();
 
-logic clk_i;
-logic rst_i;
-logic [7:0] x1_i;
-logic [7:0] x2_i;
-logic [7:0] x3_i;
-logic [18:0] y1_o;
-logic [18:0] y2_o;
+//---------------------------------
+// Сигналы
+//---------------------------------
+  logic clk;
+  logic rst;
 
+  logic [WIDTH_X:0] x1_i, x2_i, x3_i;
+  logic [WIDTH_Y:0] y1_o, y2_o;
+
+
+//---------------------------------
+// тестируемое устройство
+//---------------------------------
 localparam W11 = 8'd2;
 localparam W12 = 8'd3;
 localparam W13 = 8'd4;
@@ -29,99 +37,233 @@ syst_ws syst_ws1
 );
 
 
-parameter CLK_PERIOD = 10;
+//---------------------------------
+// Переменные тестирования
+//---------------------------------
+
+// Период тактового сигнала
+  parameter CLK_PERIOD = 10;
+
+// Пакет и mailbox'ы
+  typedef struct {
+      rand logic [WIDTH_X:0]  x1_i;
+      rand logic [WIDTH_X:0]  x2_i;
+      rand logic [WIDTH_X:0]  x3_i;
+  } packet_in;
+  typedef struct {
+      rand logic [WIDTH_Y:0] y1_o;
+      rand logic [WIDTH_Y:0] y2_o;
+  } packet_out;
+
+  mailbox#(packet_in) gen2drv = new();
+  mailbox#(packet_in) in_mbx  = new();
+  mailbox#(packet_out) out_mbx = new();
+
+
+//---------------------------------
+// Методы
+//---------------------------------
+// Генерация тактового сигнала
+
+
+// Генерация сигнала сброса
+  task reset();
+      rst_i <= 1;
+      #(10 * CLK_PERIOD);
+      rst_i <= 0;
+  endtask
+
+//аймаут теста
+  task timeout(int timeout_cycles = 100000);
+      repeat(timeout_cycles) @(posedge clk_i);
+      $stop();
+  endtask
+
+// Master
+  task gen_master(
+      int size_min   = 1,
+      int size_max   = 10,
+  );
+    packet p;
+    p.x1_i = $urandom_range(0, 2**WIDTH_X-1);
+    p.x2_i = $urandom_range(0, 2**WIDTH_X-1);
+    p.x3_i = $urandom_range(0, 2**WIDTH_X-1);
+    gen2drv.put(p);
+
+  endtask
+
+
+  task do_master_gen(
+        int pkt_amount = 100,
+    );
+        repeat(pkt_amount) begin
+            gen_master(size_min, size_max);
+        end
+  endtask
+
+
+  task reset_master();
+        wait(rst_i);
+        x1_i  <= 0;
+        x2_i  <= 0;
+        x3_i  <= 0;
+        wait(~rst_i);
+  endtask
+
+
+
+  task drive_master(packet p);
+        x1_i  <= p.x1_i;
+        x2_i  <= p.x2_i;
+        x3_i  <= p.x3_i;
+        @(posedge clk);
+  endtask
+
+
+  task do_master_drive();
+        packet p;
+        reset_master();
+        @(posedge clk);
+        forever begin
+            gen2drv.get(p);
+            drive_master(p);
+        end
+  endtask
+
+
+  task monitor_master();
+        packet p;
+        @(posedge clk);
+            p.x1_i  = x1_i;
+            p.x2_i  = x2_i;
+            p.x3_i  = x3_i;
+            in_mbx.put(p);
+  endtask
+
+
+  task do_master_monitor();
+        wait(~rst_i);
+        forever begin
+            monitor_master();
+        end
+  endtask
+
+  // Master
+  task master(
+      int gen_pkt_amount = 100
+  );
+      fork
+          do_master_gen(gen_pkt_amount);
+          do_master_drive();
+          do_master_monitor();
+      join
+  endtask
+
+
+  // Slave
+  task monitor_slave();
+        packet p;
+        @(posedge clk);
+          p.y1_o  = y1_o;
+          p.y2_o  = y1_o;
+          out_mbx.put(p);
+  endtask
+
+  task do_slave_monitor();
+        wait(~rst_i);
+        forever begin
+            monitor_slave();
+        end
+  endtask
+
+  // Slave
+  task slave();
+      fork
+          do_slave_monitor();
+      join
+  endtask
+
+
+
+  // Проверка
+  task check(packet in, packet out);
+      logic [WIDTH_Y:0] y1_expected = in.x1_i*W11 + in.x2_i*W12 + in.x3_i*W13
+
+      if(out.y1_o !==  y1_expected)
+        $error("[%0t] ERROR: input_data: x1=%0d,x2=%0d,x3=%0d expected: y1=%0d, got: y1=%0d",
+            $time, in.x1_input, in.x2_input, in.x3_input, y1_expected, out.y1_o);
+      else
+        $display("[%0t] OK:  input_data: x1=%0d,x2=%0d,x3=%0d, res: y1=%0d",
+          $time,  in.x1_input, in.x2_input, in.x3_input, out.y1_o);
+
+      @(posedge clk_i);
+
+
+      if(out.y1_o !==  y1_expected)
+        $error("[%0t] ERROR: input_data: x1=%0d,x2=%0d,x3=%0d expected: y1=%0d, got: y1=%0d",
+            $time, in.x1_input, in.x2_input, in.x3_input, y1_expected, out.y1_o);
+      else
+        $display("[%0t] OK:  input_data: x1=%0d,x2=%0d,x3=%0d, res: y1=%0d",
+          $time,  in.x1_input, in.x2_input, in.x3_input, out.y1_o);
+
+
+  endtask
+
+
+
+  task do_check(int pkt_amount = 1);
+      int cnt;
+      packet in_p, out_p;
+      forever begin
+          in_mbx.get(in_p);
+          out_mbx.get(out_p);
+          check(in_p, out_p);
+          cnt = cnt + out_p.tlast;
+          if( cnt == pkt_amount ) begin
+              break;
+          end
+      end
+      $stop();
+  endtask
+
+  task error_checker(int pkt_amount = 1);
+      do_check(pkt_amount);
+  endtask
+
+
+  //---------------------------------
+  // Выполнение
+  //---------------------------------
+
   // Генерация тактового сигнала
   initial begin
-    clk_i <= 0;
-    forever begin
-        #(CLK_PERIOD/2) clk_i = ~clk_i;// Пишите тут.
-    end
-  end
-
-  // Генерация сигнала сброса
-  initial begin
-    rst_i <= 1;
-    x1_i  <= 0;
-    x2_i  <= 0;
-    x3_i  <= 0;
-    #(4*CLK_PERIOD);
-    rst_i <= 0;
-  end
-
-
-   // Генерация входных воздействий
-  initial begin
-    wait(!rst_i);
-    @(posedge clk_i);
-
-    repeat(100) begin
-      @(posedge clk_i);
-      x1_i   <= $urandom_range(0,2);// 2**8-1
-      x2_i   <= $urandom_range(0, 4);
-      x3_i   <= $urandom_range(0, 3);
-    end
-  end
-
-  typedef struct {
-    logic [7:0]  x1_input;
-    logic [7:0]  x2_input;
-    logic [7:0]  x3_input;
-    logic [18:0] y1_expected;
-    logic [18:0] y2_expected;
-  } pkt;
-
-
-  mailbox#(pkt) exp_mbx  = new();
-
-
-   // сохранение в мэил бокс
-  initial begin
-    pkt pkt;
-    wait(!rst_i);
-    forever begin
-      @(posedge clk_i);
-      pkt.x1_input    = x1_i;
-      pkt.x2_input    = x2_i;
-      pkt.x3_input    = x3_i;
-      pkt.y1_expected = x1_i*W11 + x2_i*W12 + x3_i*W13;
-      pkt.y2_expected = x1_i*W21 + x2_i*W22 + x3_i*W23;
-      exp_mbx.put(pkt);
-    end
-  end
-
-   // проверка
-   initial begin
-    pkt pkt;
-    wait(!rst_i);
-    @(posedge clk_i);
-
-    forever begin
-      @(posedge clk_i);
-        exp_mbx.get(pkt);
-        @(posedge clk_i);
-        if (y1_o !== pkt.y1_expected)
-          $error("[%0t] ERROR: input_data: x1=%0d,x2=%0d,x3=%0d expected: y1=%0d, got: y1=%0d",
-            $time, pkt.x1_input, pkt.x2_input, pkt.x3_input, pkt.y1_expected, y1_o);
-        else
-          $display("[%0t] OK:  input_data: x1=%0d,x2=%0d,x3=%0d, res: y1=%0d",
-            $time,  pkt.x1_input, pkt.x2_input, pkt.x3_input, y1_o);
-
-        @(posedge clk_i);
-
-        if (y2_o !== pkt.y2_expected)
-         $error("[%0t] ERROR: input_data: x1=%0d,x2=%0d,x3=%0d expected: y2=%0d, got: y2=%0d",
-           $time, pkt.x1_input, pkt.x2_input, pkt.x3_input, pkt.y2_expected, y2_o);
-        else
-          $display("[%0t] OK:  input_data: x1=%0d,x2=%0d,x3=%0d, res: y2=%0d",
-            $time,  pkt.x1_input, pkt.x2_input, pkt.x3_input, y2_o);
-
+      clk <= 0;
+      forever begin
+          #(CLK_PERIOD/2) clk <= ~clk;
       end
   end
 
-  // Таймаут
-  initial begin
-   repeat(100000) @(posedge clk_i);
-   $stop();
-  end
+
+  task test(
+        int gen_pkt_amount   = 100,   // количество пакетов
+        int timeout_cycles   = 100000 // таймаут теста
+    );
+        fork
+            master       (gen_pkt_amount);
+            slave        ();
+            error_checker(gen_pkt_amount);
+            timeout      (timeout_cycles);
+        join
+    endtask
+
+    initial begin
+        fork
+            reset();
+        join_none
+        test(
+            .gen_pkt_amount (    100),
+            .timeout_cycles (1000000)
+        );
+    end
 
 endmodule
