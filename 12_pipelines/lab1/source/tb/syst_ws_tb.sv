@@ -174,7 +174,7 @@ syst_ws syst_ws1
         wait(~rst_i);
         if (set_delay !=3)
           $display("delay=%0d",set_delay);
-          
+
         repeat(set_delay + 2)@(posedge clk_i);
         forever begin
             monitor_slave(set_delay);
