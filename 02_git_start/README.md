@@ -20,12 +20,18 @@ git commit -m "Обновлён .gitignore, удалены лишние файл
 
 ## вытягивание обновлений основной ветки в свою
 * Убедись, что у тебя свежий main
+```bash
 git fetch origin
 git checkout main
 git pull origin main
+```
 
 * Переключись обратно на свою ветку
+```bash
 git checkout feature/some-task
+```
 
 * Применяем коммиты поверх обновлённого main
+```bash
 git rebase main
+```
