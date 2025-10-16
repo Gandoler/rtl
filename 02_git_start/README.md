@@ -1,5 +1,7 @@
 # то что никак не получаеться запомнить:
 
+notepad (Get-PSReadLineOption).HistorySavePath
+
 ## переключение на другую удаленную ветку
 
 ```bash
