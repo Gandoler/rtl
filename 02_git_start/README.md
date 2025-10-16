@@ -16,3 +16,16 @@ git rm -r --cached .
 git add .
 git commit -m "Обновлён .gitignore, удалены лишние файлы из индекса"
 ```
+
+
+## вытягивание обновлений основной ветки в свою
+* Убедись, что у тебя свежий main
+git fetch origin
+git checkout main
+git pull origin main
+
+* Переключись обратно на свою ветку
+git checkout feature/some-task
+
+* Применяем коммиты поверх обновлённого main
+git rebase main
